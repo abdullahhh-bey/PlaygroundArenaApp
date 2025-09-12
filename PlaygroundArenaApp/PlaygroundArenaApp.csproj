@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Core\Models\5edcgubh.vfz~" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.20" />
@@ -28,12 +32,7 @@
   <ItemGroup>
     <Folder Include="Application\Middlewares\" />
     <Folder Include="Application\Mapping\" />
-    <Folder Include="Application\Services\" />
-    <Folder Include="Core\Models\" />
     <Folder Include="Core\DTO\" />
-    <Folder Include="Infrastructure\Data\" />
-    <Folder Include="Infrastructure\Repository\" />
-    <Folder Include="Presentation\Controllers\" />
   </ItemGroup>
 
 </Project>
