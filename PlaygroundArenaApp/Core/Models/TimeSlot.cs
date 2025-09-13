@@ -7,6 +7,7 @@
         public DateTime EndTime { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;
         public bool IsAvailable { get; set; }
+        public int Price { get; set; }
         public int CourtId { get; set; }
         public Court Court { get; set; } = null!;
 
