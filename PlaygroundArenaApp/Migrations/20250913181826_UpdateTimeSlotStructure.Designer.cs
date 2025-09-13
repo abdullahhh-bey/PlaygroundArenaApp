@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlaygroundArenaApp.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PlaygroundArenaApp.Infrastructure.Data;
 namespace PlaygroundArenaApp.Migrations
 {
     [DbContext(typeof(PlaygroundArenaDbContext))]
-    partial class PlaygroundArenaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250913181826_UpdateTimeSlotStructure")]
+    partial class UpdateTimeSlotStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

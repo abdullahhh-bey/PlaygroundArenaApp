@@ -32,7 +32,6 @@
   <ItemGroup>
     <Folder Include="Application\Middlewares\" />
     <Folder Include="Application\Mapping\" />
-    <Folder Include="Core\DTO\" />
   </ItemGroup>
 
 </Project>
