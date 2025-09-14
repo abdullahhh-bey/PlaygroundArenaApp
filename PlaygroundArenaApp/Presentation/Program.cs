@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,11 @@ builder.Services.AddDbContext<PlaygroundArenaDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+
+//Registring a AdminService
+builder.Services.AddScoped<AdminArenaService>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

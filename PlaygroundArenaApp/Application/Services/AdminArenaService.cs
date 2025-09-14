@@ -2,20 +2,21 @@
 
 namespace PlaygroundArenaApp.Application.Services
 {
-    public class ArenaInformationService
+    public class AdminArenaService
     {
         private readonly PlaygroundArenaDbContext _context;
-        private readonly ILogger _logger;
+        private readonly ILogger<AdminArenaService> _logger;
 
-
-        public ArenaInformationService(PlaygroundArenaDbContext context, ILogger logger)
+        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
 
-        //All get services
+
+        //All write/add services
+
 
     }
 }
