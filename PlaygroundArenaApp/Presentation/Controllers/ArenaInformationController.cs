@@ -82,7 +82,25 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         public async Task<IActionResult> GetTimeSlotsByCourtIdAPI(int id)
         {
             var CourtSlot = await _arenaService.GetCourtWithSlotsService(id);
+            if (CourtSlot.TimeSlots.Count == 0)
+                return Ok(new
+                {
+                    court = CourtSlot,
+                    slots = "This Court has no slots yet"
+                });
+
             return Ok(CourtSlot);
+        }
+
+
+
+
+        [HttpGet("courts-by-arenaid/{id}")]
+        public async Task<IActionResult> GetArenaWithCourtsAPI(int id)
+        {
+            var check = await _arenaService.GetArenaWithCourtService(id);
+           
+            return Ok(check);
         }
 
 

@@ -78,6 +78,7 @@ namespace PlaygroundArenaApp.Application.Services
             var courtTimeSlots = await _context.Courts
                                 .Include(t =>  t.TimeSlots)
                                 .FirstOrDefaultAsync(c => c.CourtId == id);
+
             if (courtTimeSlots == null)
                 throw new KeyNotFoundException("Court dont exist");
 
@@ -102,13 +103,35 @@ namespace PlaygroundArenaApp.Application.Services
 
             return Courtdto;
         }
-        
 
 
-        //public async Task<ArenaDetailsDTO> GetArenaWithCourtService(int id)
-        //{
 
-        //}
+        public async Task<ArenaDetailsDTO> GetArenaWithCourtService(int id)
+        {
+            var arenaCourt = await _context.Arenas
+                            .Include(a => a.Courts)
+                            .FirstOrDefaultAsync(a => a.ArenaId == id);
+
+            if (arenaCourt == null)
+                throw new KeyNotFoundException("Arena not found");
+
+            var arenaDTO = new ArenaDetailsDTO
+            {
+                ArenaId = arenaCourt.ArenaId,
+                Name = arenaCourt.Name,
+                Location = arenaCourt.Location,
+                CourtDetails = arenaCourt.Courts.Select(c =>
+                    new CourtDetailsDTO
+                    {
+                        CourtId = c.CourtId,
+                        Name = c.Name,
+                        CourtType = c.CourtType
+                    }
+                ).ToList()
+            };
+
+            return arenaDTO;
+        }
 
 
     }
