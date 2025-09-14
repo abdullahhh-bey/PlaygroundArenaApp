@@ -40,5 +40,52 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
+
+        [HttpGet("court-info")]
+        public async Task<IActionResult> GetCourtAPI()
+        {
+            var check = await _arenaService.GetCourtService();
+            if (check.Count == 0)
+                return NotFound("No Court");
+
+            return Ok(check);
+        }
+
+
+
+        [HttpGet("court-info/{id}")]
+        public async Task<IActionResult> GetCourtByIdAPI(int id)
+        {
+            var check = await _arenaService.GetCourtByIdService(id);
+            if (check == null)
+                return NotFound("No Court");
+
+            return Ok(check);
+        }
+
+
+
+
+        [HttpGet("time-slots")]
+        public async Task<IActionResult> GetTimeSlotsAPI()
+        {
+            var slots = await _arenaService.GetTimeSlotsService();
+            if (slots.Count == 0)
+                return NotFound("No Slot");
+
+            return Ok(slots);
+        }
+
+
+
+        [HttpGet("time-slots/{id}")]
+        public async Task<IActionResult> GetTimeSlotsByCourtIdAPI(int id)
+        {
+            var CourtSlot = await _arenaService.GetCourtWithSlotsService(id);
+            return Ok(CourtSlot);
+        }
+
+
+
     }
 }

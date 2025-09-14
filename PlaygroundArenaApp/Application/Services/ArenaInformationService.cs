@@ -40,8 +40,29 @@ namespace PlaygroundArenaApp.Application.Services
         }
 
 
+        public async Task<List<CourtDetailsDTO>> GetCourtService()
+        {
+            var check = await _context.Courts.ToListAsync();
+            if(check.Count == 0)
+                return new List<CourtDetailsDTO>();
 
-        public async Task<List<TimeSlotsDTO>> GetTimeSlotsByCourtIdService()
+            var dto = _mapper.Map<List<CourtDetailsDTO>>(check);
+            return dto;
+        }
+
+
+        public async Task<CourtDetailsDTO> GetCourtByIdService(int id)
+        {
+            var check = await _context.Courts.FindAsync(id);
+            if (check == null)
+                throw new KeyNotFoundException($"Court with Id:{id} not found");
+
+            var dto = _mapper.Map<CourtDetailsDTO>(check);
+            return dto;
+        }
+
+
+        public async Task<List<TimeSlotsDTO>> GetTimeSlotsService()
         {
             var timeSlots =  await _context.TimeSlots.ToListAsync();
             if (timeSlots.Count == 0)
@@ -50,6 +71,44 @@ namespace PlaygroundArenaApp.Application.Services
             var dtos = _mapper.Map<List<TimeSlotsDTO>>(timeSlots);
             return dtos;
         }
+
+
+        public async Task<CourtWithTimeSlotsDTO> GetCourtWithSlotsService(int id)
+        {
+            var courtTimeSlots = await _context.Courts
+                                .Include(t =>  t.TimeSlots)
+                                .FirstOrDefaultAsync(c => c.CourtId == id);
+            if (courtTimeSlots == null)
+                throw new KeyNotFoundException("Court dont exist");
+
+            var Courtdto = new CourtWithTimeSlotsDTO
+            {
+                CourtId = courtTimeSlots.CourtId,
+                Name = courtTimeSlots.Name,
+                Type = courtTimeSlots.CourtType,
+                TimeSlots = courtTimeSlots.TimeSlots.Select(t =>
+                new TimeSlotsDTO
+                {
+                    TimeSlotId = t.TimeSlotId,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    IsAvailable = t.IsAvailable,
+                    Price = t.Price,
+                    CourtId = t.CourtId,
+                    Date = t.Date
+                })
+                .ToList()
+            };
+
+            return Courtdto;
+        }
+        
+
+
+        //public async Task<ArenaDetailsDTO> GetArenaWithCourtService(int id)
+        //{
+
+        //}
 
 
     }
