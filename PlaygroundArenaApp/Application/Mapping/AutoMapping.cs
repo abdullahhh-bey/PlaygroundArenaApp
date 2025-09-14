@@ -11,6 +11,7 @@ namespace PlaygroundArenaApp.Application.Mapping
 
             CreateMap<Arena , GetArenaDTO>();
             CreateMap<User, UsersDTO>();
+            CreateMap<TimeSlot , TimeSlotsDTO>();
         }
     }
 }

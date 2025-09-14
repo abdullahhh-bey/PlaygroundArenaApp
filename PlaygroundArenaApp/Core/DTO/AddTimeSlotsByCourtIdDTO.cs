@@ -8,7 +8,6 @@ namespace PlaygroundArenaApp.Core.DTO
         public TimeSpan StartTime { get; set; }
         [Required]
         public TimeSpan EndTime { get; set; }
-        [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
         [Required]
         public bool IsAvailable { get; set; }

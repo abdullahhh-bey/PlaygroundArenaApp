@@ -45,5 +45,37 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
+
+        [HttpPost("add-court")]
+        public async Task<IActionResult> CreateCourtAPI( AddCourtByArenaIdDTO dto )
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Incomplete Information");
+
+            var check = await _adminservice.CreateCourtService(dto);
+            if (!check)
+                return NotFound("Arena does not exist!");
+
+            return Ok($"Court for Arena:{dto.ArenaId} Created");
+        }
+
+
+
+        [HttpPost("add-slots-by-courtid")]
+        public async Task<IActionResult> CreateCourtTimeSlotsAPI(AddTimeSlotsByCourtIdDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Incomplete Information");
+
+            var check = await _adminservice.CreateCourtTimeSlotsService(dto);
+            if (!check)
+                return BadRequest("Court dont exist");
+
+            return Ok($"Time slot for Court:{dto.CourtId} created");
+        }
+
+
+
+
     }
 }

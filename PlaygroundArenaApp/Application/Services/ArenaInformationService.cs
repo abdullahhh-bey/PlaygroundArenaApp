@@ -40,5 +40,17 @@ namespace PlaygroundArenaApp.Application.Services
         }
 
 
+
+        public async Task<List<TimeSlotsDTO>> GetTimeSlotsByCourtIdService()
+        {
+            var timeSlots =  await _context.TimeSlots.ToListAsync();
+            if (timeSlots.Count == 0)
+                return new List<TimeSlotsDTO>();
+
+            var dtos = _mapper.Map<List<TimeSlotsDTO>>(timeSlots);
+            return dtos;
+        }
+
+
     }
 }
