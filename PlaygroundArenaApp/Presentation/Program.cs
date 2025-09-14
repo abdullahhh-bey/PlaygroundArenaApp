@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PlaygroundArenaApp.Application.Mapping;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
 
@@ -16,8 +17,12 @@ builder.Services.AddDbContext<PlaygroundArenaDbContext>(options =>
 });
 
 
-//Registring a AdminService
+//Registring a AdminService & ArenInfoService
 builder.Services.AddScoped<AdminArenaService>();
+builder.Services.AddScoped<ArenaInformationService>();
+
+//registered Auto Mapper
+builder.Services.AddAutoMapper(typeof(AutoMapping));
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,7 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllers();

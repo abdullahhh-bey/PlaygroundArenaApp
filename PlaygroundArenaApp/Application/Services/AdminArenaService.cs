@@ -10,12 +10,10 @@ namespace PlaygroundArenaApp.Application.Services
     public class AdminArenaService
     {
         private readonly PlaygroundArenaDbContext _context;
-        private readonly ILogger<AdminArenaService> _logger;
 
-        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger)
+        public AdminArenaService(PlaygroundArenaDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
 
@@ -67,6 +65,10 @@ namespace PlaygroundArenaApp.Application.Services
 
             return true;
         }
+
+
+
+
 
     }
 }
