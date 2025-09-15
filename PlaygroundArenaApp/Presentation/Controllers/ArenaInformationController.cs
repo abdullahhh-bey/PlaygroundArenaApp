@@ -10,7 +10,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
     {
         private readonly ArenaInformationService _arenaService;
         private readonly ILogger<ArenaInformationController> _logger;
-
+        //logger
         public ArenaInformationController(ArenaInformationService arenaService, ILogger<ArenaInformationController> logger)
         {
             _arenaService = arenaService;
