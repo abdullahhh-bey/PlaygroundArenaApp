@@ -10,12 +10,10 @@ namespace PlaygroundArenaApp.Presentation.Controllers
     public class AdminControlController : ControllerBase
     {
         private readonly AdminArenaService _adminservice;
-        private readonly ILogger<AdminControlController> _logger;
 
-        public AdminControlController(AdminArenaService adminservice , ILogger<AdminControlController> logger)
+        public AdminControlController(AdminArenaService adminservice)
         {
             _adminservice = adminservice;
-            _logger = logger;
         }
 
 

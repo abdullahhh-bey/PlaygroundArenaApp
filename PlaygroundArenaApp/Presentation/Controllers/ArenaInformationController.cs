@@ -9,12 +9,9 @@ namespace PlaygroundArenaApp.Presentation.Controllers
     public class ArenaInformationController : ControllerBase
     {
         private readonly ArenaInformationService _arenaService;
-        private readonly ILogger<ArenaInformationController> _logger;
-        //logger
-        public ArenaInformationController(ArenaInformationService arenaService, ILogger<ArenaInformationController> logger)
+        public ArenaInformationController(ArenaInformationService arenaService)
         {
             _arenaService = arenaService;
-            _logger = logger;
         }
 
 

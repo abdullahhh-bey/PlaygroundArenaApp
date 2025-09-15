@@ -9,11 +9,13 @@ namespace PlaygroundArenaApp.Application.Services
     {
         private readonly PlaygroundArenaDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<ArenaInformationService> _logger;
 
-        public ArenaInformationService(PlaygroundArenaDbContext context, IMapper mapper)
+        public ArenaInformationService(PlaygroundArenaDbContext context, IMapper mapper, ILogger<ArenaInformationService> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
 
@@ -25,6 +27,7 @@ namespace PlaygroundArenaApp.Application.Services
                 return new List<GetArenaDTO>();
 
             var arenasDTO = _mapper.Map<List<GetArenaDTO>>(arenas);
+            _logger.LogInformation("Getting All Arenas Details at {Time}", DateTime.UtcNow);
             return arenasDTO;
         }
 
@@ -36,6 +39,7 @@ namespace PlaygroundArenaApp.Application.Services
                 return new List<UsersDTO>();
 
             var usersDTO = _mapper.Map<List<UsersDTO>>(users);
+            _logger.LogInformation("Getting All Users Details at {Time}", DateTime.UtcNow);
             return usersDTO;
         }
 
@@ -47,6 +51,7 @@ namespace PlaygroundArenaApp.Application.Services
                 return new List<CourtDetailsDTO>();
 
             var dto = _mapper.Map<List<CourtDetailsDTO>>(check);
+            _logger.LogInformation("Getting All Courts Details at {Time}", DateTime.UtcNow);
             return dto;
         }
 
@@ -58,6 +63,7 @@ namespace PlaygroundArenaApp.Application.Services
                 throw new KeyNotFoundException($"Court with Id:{id} not found");
 
             var dto = _mapper.Map<CourtDetailsDTO>(check);
+            _logger.LogInformation("Getting Court {Id} Details at {Time}", dto.CourtId ,DateTime.UtcNow);
             return dto;
         }
 
@@ -69,6 +75,7 @@ namespace PlaygroundArenaApp.Application.Services
                 return new List<TimeSlotsDTO>();
 
             var dtos = _mapper.Map<List<TimeSlotsDTO>>(timeSlots);
+            _logger.LogInformation("Getting All TimeSlots Details at {Time}", DateTime.UtcNow);
             return dtos;
         }
 
@@ -101,6 +108,8 @@ namespace PlaygroundArenaApp.Application.Services
                 .ToList()
             };
 
+            _logger.LogInformation("Getting Court {Id} Time Slot Details at {Time}", Courtdto.CourtId ,DateTime.UtcNow);
+
             return Courtdto;
         }
 
@@ -130,6 +139,7 @@ namespace PlaygroundArenaApp.Application.Services
                 ).ToList()
             };
 
+            _logger.LogInformation("Getting Arena {Id} with all of its Court Details at {Time}", arenaDTO.ArenaId ,DateTime.UtcNow);
             return arenaDTO;
         }
 

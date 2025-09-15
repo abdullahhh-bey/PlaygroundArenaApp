@@ -10,10 +10,11 @@ namespace PlaygroundArenaApp.Application.Services
     public class AdminArenaService
     {
         private readonly PlaygroundArenaDbContext _context;
-
-        public AdminArenaService(PlaygroundArenaDbContext context)
+        private readonly ILogger<AdminArenaService> _logger;
+        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
 
@@ -35,7 +36,7 @@ namespace PlaygroundArenaApp.Application.Services
             };
 
             await _context.Arenas.AddAsync(arena);
-
+            _logger.LogInformation("Arena {ID} added to the Database at {Time}", arena.ArenaId , DateTime.UtcNow);
             await _context.SaveChangesAsync();
 
             return true;
@@ -61,6 +62,7 @@ namespace PlaygroundArenaApp.Application.Services
             };
 
             await _context.Users.AddAsync(user);
+            _logger.LogInformation("User {ID} added to the Database at {Time}", user.UserId, DateTime.UtcNow);
             await _context.SaveChangesAsync();
 
             return true;
@@ -81,6 +83,7 @@ namespace PlaygroundArenaApp.Application.Services
             };
 
             await _context.Courts.AddAsync(court);
+            _logger.LogInformation("Court {ID} added to the Database at {Time}", court.CourtId, DateTime.UtcNow);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -114,6 +117,7 @@ namespace PlaygroundArenaApp.Application.Services
             };
 
             await _context.TimeSlots.AddAsync(timeslot);
+            _logger.LogInformation("TimeSlots for Court {ID} added to the Database at {Time}", timeslot.CourtId, DateTime.UtcNow);
             await _context.SaveChangesAsync();
             return true;
         }

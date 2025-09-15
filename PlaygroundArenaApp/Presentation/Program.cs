@@ -1,14 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Application.Mapping;
 using PlaygroundArenaApp.Application.Middlewares.CustomGlobalExceptionHandler;
+using PlaygroundArenaApp.Application.Middlewares.CustomSerilogLogging;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+
+//COnfiguring Logging with Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+//Replacing the Default .Net logging with Serilog Logging
+builder.Host.UseSerilog();
 
 
 //Added a DB Context service to the container
@@ -45,6 +57,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<SerilogLoggingMiddleware>();
 app.UseExceptionHandler();
 app.UseRouting();
 app.UseAuthorization();
