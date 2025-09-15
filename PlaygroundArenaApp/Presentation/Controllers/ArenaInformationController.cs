@@ -23,7 +23,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         {
             var arenas = await _arenaService.GetArenasService();
             if (arenas.Count == 0)
-                return NotFound("No Arena Registered");
+                throw new KeyNotFoundException("Arena doesn't exist");
 
             return Ok(arenas);
         }
@@ -34,7 +34,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         {
             var users = await _arenaService.GetUsersService();
             if (users.Count == 0)
-                return NotFound("No Users Registered");
+                throw new KeyNotFoundException("User doesn't exist");
 
             return Ok(users);
         }
@@ -46,7 +46,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         {
             var check = await _arenaService.GetCourtService();
             if (check.Count == 0)
-                return NotFound("No Court");
+                throw new KeyNotFoundException("Court doesn't exist");
 
             return Ok(check);
         }
@@ -58,7 +58,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         {
             var check = await _arenaService.GetCourtByIdService(id);
             if (check == null)
-                return NotFound("No Court");
+                throw new KeyNotFoundException("Court doesn't exist");
 
             return Ok(check);
         }
@@ -71,7 +71,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         {
             var slots = await _arenaService.GetTimeSlotsService();
             if (slots.Count == 0)
-                return NotFound("No Slot");
+                throw new KeyNotFoundException("Slot doesn't exist");
 
             return Ok(slots);
         }

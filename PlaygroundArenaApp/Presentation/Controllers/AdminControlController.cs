@@ -23,12 +23,12 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         [HttpPost("add-user")]
         public async Task<IActionResult> CreateUserAPI( AddUserDTO dto)
         {
-            if(!ModelState.IsValid)
-                return BadRequest("Incomplete Information");
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Invalid null value!");
 
             var check = await _adminservice.CreateUserService(dto);
             if (!check)
-                return BadRequest("Something went wrong");
+                throw new BadHttpRequestException("Something went wrong!");
 
             return Ok("User Created");
         }
@@ -37,8 +37,8 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         [HttpPost("add-arena")]
         public async Task<IActionResult> CreateArenaAPI(AddArenaDTO dto)
         {
-            if (!ModelState.IsValid) 
-                return BadRequest("Incomplete Information");
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Invalid null value!");
 
             var check = await _adminservice.CreateArenaService(dto);
             return Ok("Arena Created");
@@ -50,11 +50,11 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         public async Task<IActionResult> CreateCourtAPI( AddCourtByArenaIdDTO dto )
         {
             if (!ModelState.IsValid)
-                return BadRequest("Incomplete Information");
+                throw new ArgumentNullException("Invalid null value!");
 
             var check = await _adminservice.CreateCourtService(dto);
             if (!check)
-                return NotFound("Arena does not exist!");
+                throw new KeyNotFoundException("Arena doesn't exist");
 
             return Ok($"Court for Arena:{dto.ArenaId} Created");
         }
@@ -65,11 +65,11 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         public async Task<IActionResult> CreateCourtTimeSlotsAPI(AddTimeSlotsByCourtIdDTO dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest("Incomplete Information");
+                throw new ArgumentNullException("Invalid null value!");
 
             var check = await _adminservice.CreateCourtTimeSlotsService(dto);
             if (!check)
-                return BadRequest("Court dont exist");
+                throw new KeyNotFoundException("Court doesn't exist");
 
             return Ok($"Time slot for Court:{dto.CourtId} created");
         }

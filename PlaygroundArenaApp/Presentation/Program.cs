@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Application.Mapping;
+using PlaygroundArenaApp.Application.Middlewares.CustomGlobalExceptionHandler;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
 
@@ -15,6 +16,11 @@ builder.Services.AddDbContext<PlaygroundArenaDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+
+//Adding Exception Handler Globally
+builder.Services.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
+builder.Services.AddProblemDetails();
 
 
 //Registring a AdminService & ArenInfoService
@@ -39,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseExceptionHandler();
 app.UseRouting();
 app.UseAuthorization();
 

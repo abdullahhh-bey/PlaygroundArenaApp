@@ -93,7 +93,7 @@ namespace PlaygroundArenaApp.Application.Services
                 return false;
 
             if (dto.StartTime >= dto.EndTime)
-                throw new ArgumentException("Start time must be before End time");
+                throw new BadHttpRequestException("Start time must be before End time");
 
 
             var slotCheck = await _context.TimeSlots.AnyAsync( t => 
