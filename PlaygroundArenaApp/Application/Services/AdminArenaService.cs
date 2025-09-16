@@ -150,29 +150,32 @@ namespace PlaygroundArenaApp.Application.Services
 
 
         // Step 1: Create Booking
-        public async Task<BookingResponseDTO> CreateBookingAsync(AddBookingDTO dto)
+        public async Task<BookingResponseDTO> CreateBookingAsync(AddBookingDTO d)
         {
-            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId);
+            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == d.CourtId);
             if (!courtExists)
                 throw new KeyNotFoundException("Court not found");
 
-            var userExists = await _context.Users.AnyAsync(u => u.UserId == dto.UserId);
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == d.UserId);
             if (!userExists)
                 throw new KeyNotFoundException("User not found");
 
        
             var slots = await _context.TimeSlots
-                    .Where(s => dto.SlotIds.Contains(s.TimeSlotId) && s.IsAvailable)
+                    .Where(s => d.TimeSlotId.Contains(s.TimeSlotId) && s.IsAvailable && s.CourtId == d.CourtId)
                     .ToListAsync();
 
-            if (slots.Count != dto.SlotIds.Count)
+            if (slots.Count == 0)
+                throw new BadHttpRequestException($"The Slots dont belong to Court:{d.CourtId}");
+
+            if (slots.Count != d.TimeSlotId.Count)
                 throw new BadHttpRequestException("One or more slots are unavailable");
 
 
             var booking = new Booking
             {
-                UserId = dto.UserId,
-                CourtId = dto.CourtId,
+                UserId = d.UserId,
+                CourtId = d.CourtId,
                 StartTime = slots.Min(s => s.Date.Add(s.StartTime)),
                 EndTime = slots.Max(s => s.Date.Add(s.EndTime)),
                 BookingStatus = "Pending"

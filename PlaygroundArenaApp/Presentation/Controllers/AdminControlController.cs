@@ -94,8 +94,8 @@ namespace PlaygroundArenaApp.Presentation.Controllers
             if (!ModelState.IsValid)
                 throw new ArgumentNullException("Incomplete Information");
 
-            var dto = await _adminservice.CreateBookingAsync(dto);
-            return Ok(dto);
+            var Bookingdto = await _adminservice.CreateBookingAsync(dto);
+            return Ok(Bookingdto);
         }
 
 
