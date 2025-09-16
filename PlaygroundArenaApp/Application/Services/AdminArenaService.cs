@@ -166,7 +166,7 @@ namespace PlaygroundArenaApp.Application.Services
                     .ToListAsync();
 
             if (slots.Count == 0)
-                throw new BadHttpRequestException($"The Slots dont belong to Court:{d.CourtId}");
+                throw new BadHttpRequestException($"Invalid Slots for Court:{d.CourtId}");
 
             if (slots.Count != d.TimeSlotId.Count)
                 throw new BadHttpRequestException("One or more slots are unavailable");
@@ -204,6 +204,8 @@ namespace PlaygroundArenaApp.Application.Services
 
             return dto;
         }
+
+
 
 
 

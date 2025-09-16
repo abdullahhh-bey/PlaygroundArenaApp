@@ -11,7 +11,6 @@ namespace PlaygroundArenaApp.Core.DTO
         public int CourtId { get; set; }
         [Required]
         public List<int> TimeSlotId { get; set; } = new List<int>();
-        [Required]
-        public string BookingStatus { get; set; }
+
     }
 }
