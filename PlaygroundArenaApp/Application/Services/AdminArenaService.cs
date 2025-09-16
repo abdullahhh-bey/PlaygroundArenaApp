@@ -149,7 +149,6 @@ namespace PlaygroundArenaApp.Application.Services
 
 
 
-        // Step 1: Create Booking
         public async Task<BookingResponseDTO> CreateBookingAsync(AddBookingDTO d)
         {
             var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == d.CourtId);
@@ -176,8 +175,8 @@ namespace PlaygroundArenaApp.Application.Services
             {
                 UserId = d.UserId,
                 CourtId = d.CourtId,
-                StartTime = slots.Min(s => s.Date.Add(s.StartTime)),
-                EndTime = slots.Max(s => s.Date.Add(s.EndTime)),
+                StartTime = slots.Min(s => s.StartTime),
+                EndTime = slots.Max(s => s.EndTime),
                 BookingStatus = "Pending"
             };
 

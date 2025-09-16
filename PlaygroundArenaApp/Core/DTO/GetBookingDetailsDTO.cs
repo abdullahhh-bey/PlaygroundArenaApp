@@ -1,6 +1,6 @@
-﻿namespace PlaygroundArenaApp.Core.Models
+﻿namespace PlaygroundArenaApp.Core.DTO
 {
-    public class Booking
+    public class GetBookingDetailsDTO
     {
         public int BookingId { get; set; }
         public int UserId { get; set; }
@@ -9,11 +9,7 @@
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public string BookingStatus { get; set; } = "Pending";
+        public PaymentDTO Payments { get; set; }
 
-
-        public Payment? Payment { get; set; }
-        public ICollection<TimeSlot> TimeSlots { get; set; } = new List<TimeSlot>();
-        public Court Court { get; set; } = null!;
-        public User User { get; set; } = null!;
     }
 }

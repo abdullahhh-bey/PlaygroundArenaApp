@@ -161,5 +161,40 @@ namespace PlaygroundArenaApp.Application.Services
         }
 
 
+
+
+        public async Task<List<GetBookingDetailsDTO>> GetBookingsService()
+        {
+            var bookings = await _context.Bookings
+                            .Include(p => p.Payment)
+                            .ToListAsync();
+
+            if (bookings.Count == 0)
+                return new List<GetBookingDetailsDTO>();
+
+
+            var dto = bookings
+                    .Select(b => new GetBookingDetailsDTO
+                    {
+                        BookingId = b.BookingId,
+                        UserId = b.UserId,
+                        CourtId = b.CourtId,
+                        BookingDate = b.BookingDate,
+                        StartTime = b.StartTime,
+                        EndTime = b.EndTime,
+                        BookingStatus = b.BookingStatus,
+                        Payments = b.Payment == null ? null : new PaymentDTO
+                        {
+                            PaymentId = b.Payment.PaymentId,
+                            Amount = b.Payment.Amount,
+                            PaymentStatus = b.Payment.PaymentStatus
+                        }
+                    }).ToList();
+
+            return dto;
+        }
+
+
+
     }
 }

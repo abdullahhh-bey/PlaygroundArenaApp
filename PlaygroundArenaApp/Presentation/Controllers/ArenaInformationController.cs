@@ -117,5 +117,18 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
+
+        [HttpGet("get-bookings")]
+        public async Task<IActionResult> GetBookingsAPI()
+        {
+            var bookings = await _arenaService.GetBookingsService();
+            if (bookings.Count == 0)
+                throw new KeyNotFoundException("No Bookings");
+
+            return Ok(bookings);
+        }
+
+
+
     }
 }
