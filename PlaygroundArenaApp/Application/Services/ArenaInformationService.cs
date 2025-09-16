@@ -166,8 +166,10 @@ namespace PlaygroundArenaApp.Application.Services
         public async Task<List<GetBookingDetailsDTO>> GetBookingsService()
         {
             var bookings = await _context.Bookings
+                            .Include(s => s.TimeSlots)
                             .Include(p => p.Payment)
                             .ToListAsync();
+
 
             if (bookings.Count == 0)
                 return new List<GetBookingDetailsDTO>();
@@ -180,9 +182,17 @@ namespace PlaygroundArenaApp.Application.Services
                         UserId = b.UserId,
                         CourtId = b.CourtId,
                         BookingDate = b.BookingDate,
-                        StartTime = b.StartTime,
-                        EndTime = b.EndTime,
                         BookingStatus = b.BookingStatus,
+                        TimeSlots = b.TimeSlots.Select(t => new TimeSlotsDTO
+                        {
+                            TimeSlotId = t.TimeSlotId,
+                            StartTime = t.StartTime,
+                            EndTime = t.EndTime,
+                            IsAvailable = t.IsAvailable,
+                            Date = t.Date,
+                            Price = t.Price,
+                            CourtId = t.CourtId
+                        }).ToList(),
                         Payments = b.Payment == null ? null : new PaymentDTO
                         {
                             PaymentId = b.Payment.PaymentId,
@@ -194,6 +204,9 @@ namespace PlaygroundArenaApp.Application.Services
             return dto;
         }
 
+
+
+        
 
 
     }

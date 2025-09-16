@@ -6,9 +6,9 @@
         public int UserId { get; set; }
         public int CourtId { get; set; }
         public DateTime BookingDate { get; set; } = DateTime.UtcNow;
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
         public string BookingStatus { get; set; } = "Pending";
+
+        public List<TimeSlotsDTO> TimeSlots { get; set; } = new List<TimeSlotsDTO>();
         public PaymentDTO Payments { get; set; }
 
     }
