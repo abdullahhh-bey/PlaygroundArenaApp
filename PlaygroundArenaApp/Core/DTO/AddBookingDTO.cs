@@ -12,6 +12,6 @@ namespace PlaygroundArenaApp.Core.DTO
         [Required]
         public List<int> TimeSlotId { get; set; } = new List<int>();
         [Required]
-        public bool BookingStatus { get; set; }
+        public string BookingStatus { get; set; }
     }
 }

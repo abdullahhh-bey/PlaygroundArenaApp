@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Infrastructure.Data;
@@ -77,6 +78,22 @@ namespace PlaygroundArenaApp.Application.Services
             var dtos = _mapper.Map<List<TimeSlotsDTO>>(timeSlots);
             _logger.LogInformation("Getting All TimeSlots Details at {Time}", DateTime.UtcNow);
             return dtos;
+        }
+
+
+        public async Task<List<TimeSlotsDTO>> GetAvailableTimeSlotsService()
+        {
+            var timeSlots = await _context.TimeSlots
+                        .Where(t => t.IsAvailable == true)
+                        .OrderBy(t => t.Date)
+                        .ToListAsync();
+
+            if (timeSlots.Count == 0)
+                return new List<TimeSlotsDTO>();
+
+            var slotsDto = _mapper.Map<List<TimeSlotsDTO>>(timeSlots);
+            _logger.LogInformation("Getting All Available TimeSlots Details at {Time}", DateTime.UtcNow);
+            return slotsDto;
         }
 
 

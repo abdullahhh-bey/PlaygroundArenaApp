@@ -14,7 +14,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
             _arenaService = arenaService;
         }
 
-        //mergetd
+
 
         [HttpGet("arena-info")]
         public async Task<IActionResult> GetArenasAPI()
@@ -64,6 +64,20 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
+        [HttpGet("available-slots")]
+        public async Task<IActionResult> GetAvailableSlotsAPI()
+        {
+            var slots = await _arenaService.GetAvailableTimeSlotsService();
+            if (slots.Count == 0)
+                throw new KeyNotFoundException("No Available Slots");
+
+            return Ok(slots);
+        }
+
+
+
+
+
         [HttpGet("time-slots")]
         public async Task<IActionResult> GetTimeSlotsAPI()
         {
@@ -76,7 +90,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("time-slots/{id}")]
+        [HttpGet("time-slots-by-court-id/{id}")]
         public async Task<IActionResult> GetTimeSlotsByCourtIdAPI(int id)
         {
             var CourtSlot = await _arenaService.GetCourtWithSlotsService(id);

@@ -75,5 +75,43 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
+        [HttpDelete("delete-arena/{id}")]
+        public async Task<IActionResult> DeleteArenaById(int id)
+        {
+            var check = await _adminservice.DeleteArenaService(id);
+            if (!check)
+                throw new KeyNotFoundException("Arena dont exist");
+
+            return NoContent();
+        }
+
+
+
+
+        [HttpPost("add-booking")]
+        public async Task<IActionResult> AddBookingAPI( AddBookingDTO dto)
+        {
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Incomplete Information");
+
+            var dto = await _adminservice.CreateBookingAsync(dto);
+            return Ok(dto);
+        }
+
+
+
+
+        [HttpPost("make-payment")]
+        public async Task<IActionResult> MakePaymentAPI(MakePaymentDTO dto)
+        {
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Incomplete Information");
+
+            var payment = await _adminservice.MakePaymentAsync(dto);
+            return Ok("Payment has been received!\nBooking Confirmed");
+        }
+             
+
+
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Core.Models;
 using PlaygroundArenaApp.Infrastructure.Data;
-using System.Web.Mvc;
 
 namespace PlaygroundArenaApp.Application.Services
 {
@@ -121,6 +120,124 @@ namespace PlaygroundArenaApp.Application.Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+
+
+        public async Task<bool> DeleteArenaService(int id)
+        {
+            var arena = await _context.Arenas
+                        .Include(c => c.Courts)
+                            .ThenInclude(t => t.TimeSlots)
+                        .FirstOrDefaultAsync(a => a.ArenaId == id);
+
+            if (arena == null)
+                return false;
+
+            //Deleting the timeslot first 
+            foreach(var court in arena.Courts)
+            {
+                _context.TimeSlots.RemoveRange(court.TimeSlots);
+            }
+
+             _context.Courts.RemoveRange(arena.Courts);
+             _context.Arenas.Remove(arena);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+
+
+
+        // Step 1: Create Booking
+        public async Task<BookingResponseDTO> CreateBookingAsync(AddBookingDTO dto)
+        {
+            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId);
+            if (!courtExists)
+                throw new KeyNotFoundException("Court not found");
+
+            var userExists = await _context.Users.AnyAsync(u => u.UserId == dto.UserId);
+            if (!userExists)
+                throw new KeyNotFoundException("User not found");
+
+       
+            var slots = await _context.TimeSlots
+                    .Where(s => dto.SlotIds.Contains(s.TimeSlotId) && s.IsAvailable)
+                    .ToListAsync();
+
+            if (slots.Count != dto.SlotIds.Count)
+                throw new BadHttpRequestException("One or more slots are unavailable");
+
+
+            var booking = new Booking
+            {
+                UserId = dto.UserId,
+                CourtId = dto.CourtId,
+                StartTime = slots.Min(s => s.Date.Add(s.StartTime)),
+                EndTime = slots.Max(s => s.Date.Add(s.EndTime)),
+                BookingStatus = "Pending"
+            };
+
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+
+            foreach (var slot in slots)
+            {
+                slot.BookingId = booking.BookingId;
+                slot.IsAvailable = false; 
+            }
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Booking {BookingId} created for user{UserId} at {Time}", booking.BookingId, booking.UserId, DateTime.UtcNow);
+
+            var dto = new BookingResponseDTO
+            {
+                Message = "Booking Pending",
+                BookingId = booking.BookingId,
+                UserId = booking.UserId,
+                CourtId = booking.CourtId
+            };
+
+            return dto;
+        }
+
+
+
+        public async Task<bool> MakePaymentAsync(MakePaymentDTO dto)
+        {
+
+            var booking = await _context.Bookings
+                .Include(b => b.TimeSlots)
+                .FirstOrDefaultAsync(b => b.BookingId == dto.BookingId && b.UserId == dto.UserId);
+
+            if (booking == null)
+                throw new KeyNotFoundException("Booking not found");
+
+            if (booking.BookingStatus == "Booked")
+                throw new InvalidOperationException("Booking is already confirmed\nPayment has been already done");
+
+            var totalAmount = booking.TimeSlots.Sum(s => s.Price);
+
+            var payment = new Payment
+            {
+                BookingId = booking.BookingId,
+                UserId = booking.UserId,
+                Amount = totalAmount,
+                PaymentStatus = "Paid",
+                PaymentDate = DateTime.UtcNow
+            };
+
+            _context.Payments.Add(payment);
+            booking.BookingStatus = "Booked";
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Payment {PaymentId} made for Booking {BookingId} at {Time}", payment.PaymentId, booking.BookingId, DateTime.UtcNow);
+
+            return true;
+        }
+
+
 
     }
 }
