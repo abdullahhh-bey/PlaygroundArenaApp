@@ -208,6 +208,43 @@ namespace PlaygroundArenaApp.Application.Services
 
         
 
+        public async Task<CourtWithTimeSlotsDTO> GetSlotsByCourtIdWithDateService(int id , DateTime date)
+        {
+
+            var court = await _context.Courts
+                        .Include(t => t.TimeSlots)
+                        .FirstOrDefaultAsync(c => c.CourtId == id);
+
+            if (court == null)
+                throw new KeyNotFoundException("Court doesn't exist");
+
+            var slots =  court.TimeSlots
+                        .Where(t => t.Date == date.Date && t.IsAvailable)
+                        .OrderBy(t => t.StartTime)
+                        .ToList();
+
+            var slotDTO = new CourtWithTimeSlotsDTO
+            {
+                CourtId = court.CourtId,
+                Type = court.CourtType,
+                Name = court.Name,
+                TimeSlots = slots.Select(t => new TimeSlotsDTO
+                {
+                    TimeSlotId = t.TimeSlotId,
+                    StartTime = t.StartTime,
+                    EndTime = t.EndTime,
+                    Price = t.Price,
+                    CourtId = t.CourtId,
+                    IsAvailable = t.IsAvailable,
+                    Date = t.Date
+                }).ToList()
+            };
+
+            return slotDTO;
+        }
+
+
+
 
     }
 }

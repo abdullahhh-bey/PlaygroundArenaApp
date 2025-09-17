@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PlaygroundArenaApp.Application.Services;
+using PlaygroundArenaApp.Core.DTO;
 
 namespace PlaygroundArenaApp.Presentation.Controllers
 {
@@ -128,6 +129,18 @@ namespace PlaygroundArenaApp.Presentation.Controllers
             return Ok(bookings);
         }
 
+
+
+
+        [HttpGet("id/slots/date")]
+        public async Task<CourtWithTimeSlotsDTO> GetSlotsWithDateByCourtIdAPI(int id , DateTime date)
+        {
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Incomplete Information");
+
+            var slots = await _arenaService.GetSlotsByCourtIdWithDateService(id, date);
+            return slots;
+        }
 
 
     }
