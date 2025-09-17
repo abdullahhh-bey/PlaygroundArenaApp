@@ -243,5 +243,57 @@ namespace PlaygroundArenaApp.Application.Services
 
 
 
+
+        public async Task<bool> CreateSlotsWithRangeService( AddSlotsEWithTimeRangeDTO dto )
+        {
+            //cannot get past 
+            if (dto.Date.Date < DateTime.UtcNow.Date)
+                throw new BadHttpRequestException("Date cannot be past");
+
+            //added for time validation
+            if (dto.Start >= dto.End || dto.Start < 0 || dto.End > 24)
+                throw new BadHttpRequestException("Invalid Start/End Time");
+
+            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId);
+            if (!courtExists)
+                throw new BadHttpRequestException("Court doesn't exist");
+
+            var existingSlots = await _context.TimeSlots
+                            .Where(s => s.CourtId == dto.CourtId && s.Date.Date == dto.Date.Date)
+                            .ToListAsync();
+
+            var slotsList = new List<TimeSlot>();
+            for (int hour = dto.Start; hour < dto.End; hour++)
+            {
+
+                //GPT
+                var slotStart = new TimeSpan(hour, 0, 0);
+                var slotEnd = new TimeSpan(hour + 1, 0, 0);
+
+                //GPT
+                bool alreadySlot = existingSlots.Any(s =>
+                    s.StartTime < slotEnd && s.EndTime > slotStart);
+
+                if (alreadySlot)
+                    throw new BadHttpRequestException($"Slot {slotStart}-{slotEnd} overlapping with theexisting slots");
+
+                slotsList.Add(new TimeSlot
+                {
+                    CourtId = dto.CourtId,
+                    Date = dto.Date.Date,
+                    StartTime = slotStart,
+                    EndTime = slotEnd,
+                    Price = dto.Price,
+                    IsAvailable = true
+                });
+            }
+
+            await _context.TimeSlots.AddRangeAsync(slotsList);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+
     }
 }

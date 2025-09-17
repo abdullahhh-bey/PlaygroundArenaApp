@@ -110,7 +110,18 @@ namespace PlaygroundArenaApp.Presentation.Controllers
             var payment = await _adminservice.MakePaymentAsync(dto);
             return Ok("Payment has been received!\nBooking Confirmed");
         }
-             
+
+
+
+        [HttpPost("timeslots/add")]
+        public async Task<IActionResult> AddSlotsByTimeRangeAPI(AddSlotsEWithTimeRangeDTO dto)
+        {
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Incomplete Information");
+
+            var check = await _adminservice.CreateSlotsWithRangeService(dto);
+            return Ok($"TimeSlot from {dto.Start} to {dto.End} CREATED for Court:{dto.CourtId}");
+        }
 
 
     }
