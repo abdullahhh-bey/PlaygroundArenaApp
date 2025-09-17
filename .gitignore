@@ -361,3 +361,26 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# React client ignores
+/playground-app-client/node_modules
+/playground-app-client/build
+/playground-app-client/coverage
+
+/playground-app-client/.pnp
+/playground-app-client/.pnp.js
+
+/playground-app-client/.DS_Store
+/playground-app-client/npm-debug.log*
+/playground-app-client/yarn-debug.log*
+/playground-app-client/yarn-error.log*
+/playground-app-client/pnpm-debug.log*
+
+# local env files
+/playground-app-client/.env.local
+/playground-app-client/.env.development.local
+/playground-app-client/.env.test.local
+/playground-app-client/.env.production.local
+
+
