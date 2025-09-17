@@ -18,7 +18,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
         //Add User
-        [HttpPost("add-user")]
+        [HttpPost("users")]
         public async Task<IActionResult> CreateUserAPI( AddUserDTO dto)
         {
             if (!ModelState.IsValid)
@@ -32,7 +32,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
-        [HttpPost("add-arena")]
+        [HttpPost("arenas")]
         public async Task<IActionResult> CreateArenaAPI(AddArenaDTO dto)
         {
             if (!ModelState.IsValid)
@@ -44,7 +44,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpPost("add-court")]
+        [HttpPost("courts")]
         public async Task<IActionResult> CreateCourtAPI( AddCourtByArenaIdDTO dto )
         {
             if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpPost("add-slots-by-courtid")]
+        [HttpPost("courts/id/slots")]
         public async Task<IActionResult> CreateCourtTimeSlotsAPI(AddTimeSlotsByCourtIdDTO dto)
         {
             if (!ModelState.IsValid)
@@ -75,7 +75,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpDelete("delete-arena/{id}")]
+        [HttpDelete("arenas/{id}")]
         public async Task<IActionResult> DeleteArenaById(int id)
         {
             var check = await _adminservice.DeleteArenaService(id);
@@ -88,7 +88,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpPost("add-booking")]
+        [HttpPost("bookings")]
         public async Task<IActionResult> AddBookingAPI( AddBookingDTO dto)
         {
             if (!ModelState.IsValid)
@@ -101,7 +101,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpPost("make-payment")]
+        [HttpPost("payments")]
         public async Task<IActionResult> MakePaymentAPI(MakePaymentDTO dto)
         {
             if (!ModelState.IsValid)
@@ -113,7 +113,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpPost("timeslots/add")]
+        [HttpPost("courts/id/timeslots")]
         public async Task<IActionResult> AddSlotsByTimeRangeAPI(AddSlotsEWithTimeRangeDTO dto)
         {
             if (!ModelState.IsValid)

@@ -17,7 +17,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("arena-info")]
+        [HttpGet("arenas")]
         public async Task<IActionResult> GetArenasAPI()
         {
             var arenas = await _arenaService.GetArenasService();
@@ -28,7 +28,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
-        [HttpGet("user-info")]
+        [HttpGet("users")]
         public async Task<IActionResult> GetUsersAPI()
         {
             var users = await _arenaService.GetUsersService();
@@ -40,7 +40,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("court-info")]
+        [HttpGet("courts")]
         public async Task<IActionResult> GetCourtAPI()
         {
             var check = await _arenaService.GetCourtService();
@@ -52,7 +52,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("court-info/{id}")]
+        [HttpGet("courts/{id}")]
         public async Task<IActionResult> GetCourtByIdAPI(int id)
         {
             var check = await _arenaService.GetCourtByIdService(id);
@@ -65,7 +65,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("available-slots")]
+        [HttpGet("slots/available")]
         public async Task<IActionResult> GetAvailableSlotsAPI()
         {
             var slots = await _arenaService.GetAvailableTimeSlotsService();
@@ -79,7 +79,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("time-slots")]
+        [HttpGet("slots")]
         public async Task<IActionResult> GetTimeSlotsAPI()
         {
             var slots = await _arenaService.GetTimeSlotsService();
@@ -91,7 +91,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("time-slots-by-court-id/{id}")]
+        [HttpGet("courts/{id}/slots")]
         public async Task<IActionResult> GetTimeSlotsByCourtIdAPI(int id)
         {
             var CourtSlot = await _arenaService.GetCourtWithSlotsService(id);
@@ -108,7 +108,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("courts-by-arenaid/{id}")]
+        [HttpGet("arenas/{id}/courts")]
         public async Task<IActionResult> GetArenaWithCourtsAPI(int id)
         {
             var check = await _arenaService.GetArenaWithCourtService(id);
@@ -119,7 +119,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("get-bookings")]
+        [HttpGet("bookings")]
         public async Task<IActionResult> GetBookingsAPI()
         {
             var bookings = await _arenaService.GetBookingsService();
@@ -132,7 +132,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
-        [HttpGet("id/slots/date")]
+        [HttpGet("courts/{id}/slots/available")]
         public async Task<CourtWithTimeSlotsDTO> GetSlotsWithDateByCourtIdAPI(int id , DateTime date)
         {
             if (!ModelState.IsValid)
