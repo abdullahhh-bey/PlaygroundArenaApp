@@ -74,6 +74,10 @@ namespace PlaygroundArenaApp.Application.Services
             if (check == null)
                 return false;
 
+            var courtCheck = await _context.Courts.AnyAsync(c => c.Name == dto.Name && c.ArenaId == dto.ArenaId);
+            if (courtCheck)
+                throw new BadHttpRequestException("Court with this name already exist");
+
             var court = new Court
             {
                 ArenaId = dto.ArenaId,
