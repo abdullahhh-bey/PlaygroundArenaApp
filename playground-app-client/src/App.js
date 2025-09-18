@@ -1,17 +1,17 @@
-import './App.css';
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Arenas from "./pages/Arenas";
+import Courts from "./pages/Courts";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <>
-    <>
-    Hello</>
-    {/* <BrowserRouter>
+    <Router>
+      <Navbar />
       <Routes>
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<Arenas />} />
+        <Route path="/courts" element={<Courts />} />
       </Routes>
-    </BrowserRouter> */}
-    </>
+    </Router>
   );
 }
 
