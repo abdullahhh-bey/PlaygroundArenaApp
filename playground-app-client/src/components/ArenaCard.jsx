@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
 
 
-
-export default function ArenaCard({ name, email, location }) {
+export default function ArenaCard({arenaId, name, email, location }) {
   return (
     <>
       <div className="card shadow-sm border-0 py-3 px-3 rounded-3 shadow-lg h-80">
         <div className="card-body ">
-          <h5 className="card-title text-center pb-3">
+          <h4 className="card-title text-center pb-3">
             <strong></strong> {name}
-          </h5>
-          <p className="card-text">
+          </h4>
+          <p className="fst-italic card-text">
             <strong>Email:</strong> {email}
           </p>
           <p className="card-text">
@@ -20,7 +19,7 @@ export default function ArenaCard({ name, email, location }) {
       </div>
       <div className="text-center py-4">
         <Link
-          to="/courts"
+          to={`arenas/${arenaId}/courts`}
           style={{
             backgroundColor: "#22305d",
             color: "white",

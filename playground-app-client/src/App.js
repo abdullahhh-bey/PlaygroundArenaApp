@@ -9,7 +9,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Arenas />} />
-        <Route path="/courts" element={<Courts />} />
+        {/*For passing the arena id in url and get it using useParams() hook*/}
+        <Route path="/arenas/:arenaId/courts" element={<Courts />} />
       </Routes>
     </Router>
   );
