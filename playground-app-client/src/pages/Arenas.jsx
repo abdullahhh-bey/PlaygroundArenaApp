@@ -34,7 +34,7 @@ export default function Arenas() {
       </h2>
       <div className="row g-4">
         {arenas.map((arena, i) => (
-          <div key={i} className="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div key={i} className="col-12 col-sm-6 col-md-4 col-lg-4 px-5">
             <ArenaCard {...arena} />
           </div>
         ))}
