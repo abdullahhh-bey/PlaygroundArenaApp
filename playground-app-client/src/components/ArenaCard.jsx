@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 
+
+
 export default function ArenaCard({ name, email, location }) {
   return (
     <>
@@ -22,8 +24,13 @@ export default function ArenaCard({ name, email, location }) {
           style={{
             backgroundColor: "#22305d",
             color: "white",
+            padding: "10px 20px",
+            fontSize: "16px",
+            fontWeight: "bold",
+            borderRadius: "8px",
+            cursor: "pointer",
           }}
-          className="btn px-5 py-2"
+          className="btn px-5 "
         >
           View Courts
         </Link>

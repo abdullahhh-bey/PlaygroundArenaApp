@@ -1,4 +1,27 @@
-export default function CourtCard({ title, img }) {
+import { useState } from "react";
+
+function CourtCard({ title, img }) {
+
+
+
+
+  //btn style by gpt
+  const [hovered, setHovered] = useState(false);
+  const btnStyle = {
+    background: "linear-gradient(90deg, #2EC4B6 50%, #2B3A67 50%)",
+    backgroundSize: "200% 100%",
+    backgroundPosition: hovered ? "left bottom" : "right bottom" ,
+    color: "white",
+    border: "none",
+    padding: "12px 24px",
+    fontSize: "16px",
+    fontWeight: "bold",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "background-position 0.5s ease-in-out",
+  };
+
+  
   return (
     <div className="card shadow border-0 rounded-3 h-100">
       <div className="position-relative">
@@ -6,14 +29,13 @@ export default function CourtCard({ title, img }) {
           Type
         </span>
       </div>
-      <div className="card-body text-center py-3">
-        <h5 className="card-title py-2">{title}</h5>
+
+      <div className="card-body text-center py-4">
+        <h5 className="card-title py-4">{title}</h5>
         <button
-          style={{
-            backgroundColor: "#22305d",
-            color: "white",
-          }}
-          className="btn btn-success px-4 mt-3 py-2"
+          style={btnStyle}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
         >
           See Time Slots
         </button>
@@ -21,3 +43,5 @@ export default function CourtCard({ title, img }) {
     </div>
   );
 }
+
+export default CourtCard;
