@@ -5,6 +5,8 @@ import apiCall from "../services/axios";
 
 export default function Courts() {
 
+  const [type , setType] = useState("")
+
   const { arenaId } = useParams();
 
   const [loading, setLoading] = useState(false);
@@ -14,18 +16,26 @@ export default function Courts() {
   useEffect(() => {
     setLoading(true);
 
+    //gpt
+    let endpoint = `/arenas/${arenaId}/courts`;
+    if (type !== "") {
+      endpoint += `/type?type=${type}`;
+    }
+
     apiCall
-      .get(`/arenas/${arenaId}/courts`)
+      .get(endpoint)
       .then((res) => {
         console.log(res.data.courtDetails)
-        setCourts(res.data.courtDetails); 
+        setCourts(res.data.courtDetails || []); 
       })
       .catch((err) => {
         setError(err);
       })
     
       setLoading(false);
-  }, [arenaId]);
+  }, [arenaId, type]);
+
+  
 
   if (loading) {
     return (
@@ -36,6 +46,7 @@ export default function Courts() {
       </div>
     );
   }
+  
 
   return (
     <div className="container py-5">
@@ -55,13 +66,20 @@ export default function Courts() {
 
       {courts.length > 0 && (
         <>
+
           <div className="d-flex justify-content-center mb-4 pb-4">
-            <select className="border-2 border-black shadow-md form-select w-50">
+            <select 
+              className="border-2 border-black shadow-md form-select w-50"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
               <option value="">Filter by type...</option>
-              <option value="tennis">Tennis</option>
-              <option value="football">Football</option>
-              <option value="basketball">Basketball</option>
-              <option value="cricket">Cricket</option>
+              <option value="Tennis">Tennis</option>
+              <option value="Volleyball">Volleyball</option>
+              <option value="Football">Football</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Cricket">Cricket</option>
+              <option value="Badminton">Badminton</option>
             </select>
           </div>
 

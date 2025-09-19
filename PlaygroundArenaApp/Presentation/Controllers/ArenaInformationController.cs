@@ -132,6 +132,8 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
+
+
         [HttpGet("courts/{id}/slots/available")]
         public async Task<CourtWithTimeSlotsDTO> GetSlotsWithDateByCourtIdAPI(int id , DateTime date)
         {
@@ -143,5 +145,20 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
+
+
+        [HttpGet("arenas/{id}/courts/type")]
+        public async Task<IActionResult> GetCourtsByTypeAPI(int id, [FromQuery] string? type)
+        {
+            var courts = await _arenaService.GetCourtByType(id, type);
+            if (courts.Count == 0)
+                throw new KeyNotFoundException($"No Court for this type:{type}");
+
+            return Ok(courts);
+        }
+
+
+ 
     }
 }
+ 

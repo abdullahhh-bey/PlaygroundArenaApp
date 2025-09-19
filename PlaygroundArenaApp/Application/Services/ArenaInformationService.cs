@@ -244,6 +244,19 @@ namespace PlaygroundArenaApp.Application.Services
         }
 
 
+        public async Task<List<CourtDetailsDTO>> GetCourtByType(int arenaId , string type)
+        {
+            var courtsType = await _context.Courts
+                            .Where(c => c.ArenaId == arenaId && c.CourtType.ToLower() == type.ToLower())
+                            .OrderBy(c => c.CourtId)
+                            .ToListAsync();
+
+            if (courtsType.Count == 0)
+                return new List<CourtDetailsDTO>();
+
+            var courtsDTO = _mapper.Map<List<CourtDetailsDTO>>(courtsType);
+            return courtsDTO;
+        }
 
 
     }
