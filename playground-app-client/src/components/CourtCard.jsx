@@ -1,9 +1,7 @@
 import { useState } from "react";
+import {Link} from "react-router"
 
-function CourtCard({ name, courtType }) {
-
-
-
+function CourtCard({ courtId , name, courtType }) {
 
   //btn style by gpt
   const [hovered, setHovered] = useState(false);
@@ -21,7 +19,6 @@ function CourtCard({ name, courtType }) {
     transition: "background-position 0.5s ease-in-out",
   };
 
-
   return (
     <div className="card shadow border-0 rounded-3 h-100">
       <div className="position-relative">
@@ -32,13 +29,15 @@ function CourtCard({ name, courtType }) {
 
       <div className="card-body text-center py-4">
         <h5 className="card-title py-4">{name}</h5>
-        <button
+        <Link
+          to={`/courts/${courtId}/slots`}
+          className="btn"
           style={btnStyle}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
           See Time Slots
-        </button>
+        </Link>
       </div>
     </div>
   );

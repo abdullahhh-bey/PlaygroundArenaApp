@@ -135,7 +135,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
         [HttpGet("courts/{id}/slots/available")]
-        public async Task<CourtWithTimeSlotsDTO> GetSlotsWithDateByCourtIdAPI(int id , DateTime date)
+        public async Task<CourtSlotsDTO> GetSlotsWithDateByCourtIdAPI(int id , DateTime date)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentNullException("Incomplete Information");

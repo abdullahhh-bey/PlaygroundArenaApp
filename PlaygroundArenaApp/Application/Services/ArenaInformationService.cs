@@ -208,9 +208,8 @@ namespace PlaygroundArenaApp.Application.Services
 
         
 
-        public async Task<CourtWithTimeSlotsDTO> GetSlotsByCourtIdWithDateService(int id , DateTime date)
+        public async Task<CourtSlotsDTO> GetSlotsByCourtIdWithDateService(int id , DateTime date)
         {
-
             var court = await _context.Courts
                         .Include(t => t.TimeSlots)
                         .FirstOrDefaultAsync(c => c.CourtId == id);
@@ -223,25 +222,23 @@ namespace PlaygroundArenaApp.Application.Services
                         .OrderBy(t => t.StartTime)
                         .ToList();
 
-            var slotDTO = new CourtWithTimeSlotsDTO
+            var slotDTO = new CourtSlotsDTO
             {
-                CourtId = court.CourtId,
-                Type = court.CourtType,
                 Name = court.Name,
-                TimeSlots = slots.Select(t => new TimeSlotsDTO
+                Slots = slots.Select(t => new SlotsDTO
                 {
-                    TimeSlotId = t.TimeSlotId,
-                    StartTime = t.StartTime,
-                    EndTime = t.EndTime,
-                    Price = t.Price,
-                    CourtId = t.CourtId,
-                    IsAvailable = t.IsAvailable,
-                    Date = t.Date
+                    Start = t.StartTime,
+                    End = t.EndTime,
+                    Price = t.Price
                 }).ToList()
             };
 
             return slotDTO;
         }
+
+
+
+
 
 
         public async Task<List<CourtDetailsDTO>> GetCourtByType(int arenaId , string type)

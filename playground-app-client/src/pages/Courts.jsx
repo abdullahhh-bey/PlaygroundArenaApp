@@ -7,7 +7,7 @@ export default function Courts() {
 
   const [type , setType] = useState("")
 
-  const { arenaId } = useParams();
+  const { arenaId } = useParams(); 
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

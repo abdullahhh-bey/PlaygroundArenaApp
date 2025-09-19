@@ -41,3 +41,28 @@ h2 {
   border-radius: 20px;
 }
 
+
+/*gpt*/
+.react-calendar {
+  border: none !important;
+  font-family: inherit;
+  width: 100% !important;
+  background: #fff;
+  border-radius: 0.5rem;
+}
+
+.react-calendar__tile {
+  padding: 10px 6px !important;
+  border-radius: 6px;
+}
+
+.react-calendar__tile--active {
+  background: #22305d !important;
+  color: white !important;
+}
+
+.react-calendar__tile--now {
+  background: #e63946 !important;
+  color: white !important;
+}
+

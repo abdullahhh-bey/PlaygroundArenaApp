@@ -14,7 +14,7 @@ export default function Arenas() {
     apiCall.get('/arenas')
     .then(res =>{
       console.log(res.data)
-      setArenas(res.data);
+      setArenas(res.data || []);
     })
     .catch(err => {
       setError(err);
@@ -53,7 +53,7 @@ export default function Arenas() {
             className="text-center fw-bold mb-5 pt-4 pb-2"
             style={{ color: "#22305d" }}
             >
-              Awww... We hit an error <br /> {error}
+              Awww... We hit an error <br /> {error.message}
           </h2>
         </>
       }
