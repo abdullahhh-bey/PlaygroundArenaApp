@@ -2,15 +2,13 @@ import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
-export default function CalendarBox({onDateSelect}) {
-    
-    const [date, setDate] = useState(new Date());
+export default function CalendarBox({ onDateSelect }) {
+  const [date, setDate] = useState(new Date());
 
-    const handleDate = (e) => { 
-        var d = e.target.value;
-        setDate(d)
-        onDateSelect(d)
-    }
+  const handleDate = (newDate) => { 
+    setDate(newDate);
+    onDateSelect(newDate);
+  };
 
   return (
     <div className="card shadow-lg p-4 text-center" style={{ width: "25rem" }}>
@@ -19,7 +17,7 @@ export default function CalendarBox({onDateSelect}) {
       </h5>
 
       <Calendar
-        onChange={handleDate}
+        onChange={handleDate}  
         value={date}
         className="w-100 border-0"
       />

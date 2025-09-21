@@ -261,7 +261,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<GetBookingDTO>> GetBookingByDate(int id , DateTime date)
         {
-            var check = _context.Courts.Any(c => c.ArenaId == id);
+            var check = _context.Courts.Any(c => c.CourtId == id);
             if (!check)
                 throw new KeyNotFoundException("Court doesn't exist");
 

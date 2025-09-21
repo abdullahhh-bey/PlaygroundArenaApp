@@ -26,7 +26,7 @@ export default function Bookings() {
 
       <div className="row mb-5">
         <div className="col-md-8 mx-auto">
-          <AddBookingForm />
+          <AddBookingForm id={courtId} />
         </div>
       </div>
 

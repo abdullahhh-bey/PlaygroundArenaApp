@@ -149,7 +149,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
         [HttpGet("bookings/{id}")]
-        public async Task<IActionResult> GetBookingByCourtIdAPI(int id, DateTime date)
+        public async Task<IActionResult> GetBookingByCourtIdAPI(int id, [FromQuery] DateTime date)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentNullException("Incomplete Info");

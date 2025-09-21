@@ -1,8 +1,21 @@
+import apiCall from "../services/axios";
 
 
 
 
-export default function AddBookingForm() {
+export default function AddBookingForm({id}) {
+
+    // const [bookingInfo , setBookingInfo] = useState(
+    //     userId : 1,
+    //     courtId : id,
+    //     timeSlotId : []
+    // ])
+
+    const handleSubmit = () => {
+        
+        apiCall.post(`/admincontrol/bookings`, {})
+    }    
+
   return (
     <div className="card shadow-sm p-4">
       <h5 className="fw-bold mb-3" style={{ color: "#22305d" }}>
@@ -30,7 +43,7 @@ export default function AddBookingForm() {
           </select>
         </div>
         <div className="col-12 text-center">
-          <button type="submit" className="btn btn-success px-4">
+          <button onChange={handleSubmit} className="btn btn-success px-4">
             Add Booking
           </button>
         </div>
