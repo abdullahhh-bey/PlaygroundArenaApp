@@ -256,5 +256,27 @@ namespace PlaygroundArenaApp.Application.Services
         }
 
 
+
+
+
+        public async Task<List<GetBookingDTO>> GetBookingByDate(int id , DateTime date)
+        {
+            var check = _context.Courts.Any(c => c.ArenaId == id);
+            if (!check)
+                throw new KeyNotFoundException("Court doesn't exist");
+
+            var bookings = await _context.Bookings
+                            .Where(b => b.CourtId == id && b.BookingDate.Date == date.Date)
+                            .ToListAsync();
+
+
+            var bookingDto = _mapper.Map<List<GetBookingDTO>>(bookings);
+            return bookingDto;
+        }
+
+
+
+
+
     }
 }

@@ -147,6 +147,22 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
 
+
+        [HttpGet("bookings/{id}")]
+        public async Task<IActionResult> GetBookingByCourtIdAPI(int id, DateTime date)
+        {
+            if (!ModelState.IsValid)
+                throw new ArgumentNullException("Incomplete Info");
+
+            var bookings = await _arenaService.GetBookingByDate(id, date);
+            return Ok(bookings);
+        }
+
+
+
+
+
+
         [HttpGet("arenas/{id}/courts/type")]
         public async Task<IActionResult> GetCourtsByTypeAPI(int id, [FromQuery] string? type)
         {
