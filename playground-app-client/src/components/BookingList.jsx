@@ -12,7 +12,7 @@ export default function BookingList({id , date}) {
     useEffect(() => {
         if (!id || !date) return;
 
-        apiCall.get(`/bookings/${id}`, {
+        apiCall.get(`arenainformation/bookings/${id}`, {
             params: { date }
         })
         .then(res => {

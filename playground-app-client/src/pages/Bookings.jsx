@@ -11,19 +11,6 @@ export default function Bookings() {
     const { courtId } = useParams();
     const [selectedSlots , setSelectedSlots] = useState([]);
 
-    const toggleButton = (slot) => {
-        setSelectedSlots((prev) => {
-            const check = prev.find(s => s.Id === slot.Id)
-            if(check){
-                return prev.filter(s => s.Id !== slot.Id)
-            } else {
-                return [...prev , slot]
-            }
-        })
-
-        console.log(selectedSlots)
-    }
-
       const totalPrice = selectedSlots.reduce((sum, slot) => sum + slot.price, 0);
 
   return (

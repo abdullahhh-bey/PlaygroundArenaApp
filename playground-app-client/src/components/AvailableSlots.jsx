@@ -13,7 +13,7 @@ export default function AvailableSlots({ id, date, setSlot, selectedSlot }) {
     const fetchSlots = async () => {
       setLoading(true);
       try {
-        const res = await apiCall.get(`/courts/${id}/slots/available`, {
+        const res = await apiCall.get(`arenainformation/courts/${id}/slots/available`, {
           params: { date },
         });
         setSlots(res.data.slots || []);
@@ -28,7 +28,7 @@ export default function AvailableSlots({ id, date, setSlot, selectedSlot }) {
   }, [id, date]);
 
 
-  
+
   //when user click a button, it selects it and add it to the list (parent sitate)
   const toggleBtn = (slot) => {
     setSlot((prev) => {

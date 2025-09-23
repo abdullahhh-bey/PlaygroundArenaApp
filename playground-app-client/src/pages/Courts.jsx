@@ -17,7 +17,7 @@ export default function Courts() {
     setLoading(true);
 
     //gpt
-    let endpoint = `/arenas/${arenaId}/courts`;
+    let endpoint = `arenainformation/arenas/${arenaId}/courts`;
     if (type !== "") {
       endpoint += `/type?type=${type}`;
     }

@@ -11,7 +11,7 @@ export default function Arenas() {
   useEffect(() => {
     setLoading(true);
     setLoading(true)
-    apiCall.get('/arenas')
+    apiCall.get('arenainformation/arenas')
     .then(res =>{
       console.log(res.data)
       setArenas(res.data || []);
