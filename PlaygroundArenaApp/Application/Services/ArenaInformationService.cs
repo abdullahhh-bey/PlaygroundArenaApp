@@ -210,6 +210,11 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<CourtSlotsDTO> GetSlotsByCourtIdWithDateService(int id , DateTime date)
         {
+            if(date.Date < DateTime.UtcNow.Date)
+            {
+                return new CourtSlotsDTO();
+            }
+
             var court = await _context.Courts
                         .Include(t => t.TimeSlots)
                         .FirstOrDefaultAsync(c => c.CourtId == id);
@@ -267,6 +272,7 @@ namespace PlaygroundArenaApp.Application.Services
 
             var bookings = await _context.Bookings
                             .Where(b => b.CourtId == id && b.BookingDate.Date == date.Date)
+                            .OrderBy(b => b.StartTime)
                             .ToListAsync();
 
 

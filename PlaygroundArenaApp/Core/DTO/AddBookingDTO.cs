@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PlaygroundArenaApp.Core.DTO
 {
-    public class AddBookingDTO
+    public class  AddBookingDTO
     {
         [Required]
         public int UserId { get; set; }
