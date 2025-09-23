@@ -137,7 +137,7 @@ namespace PlaygroundArenaApp.Application.Services
             var arenaCourt = await _context.Arenas
                             .Include(a => a.Courts)
                             .FirstOrDefaultAsync(a => a.ArenaId == id);
-
+            
             if (arenaCourt == null)
                 throw new KeyNotFoundException("Arena not found");
 
@@ -259,7 +259,6 @@ namespace PlaygroundArenaApp.Application.Services
             var courtsDTO = _mapper.Map<List<CourtDetailsDTO>>(courtsType);
             return courtsDTO;
         }
-
 
 
 

@@ -5,12 +5,6 @@ import apiCall from "../services/axios";
 
 export default function AddBookingForm({id}) {
 
-    // const [bookingInfo , setBookingInfo] = useState(
-    //     userId : 1,
-    //     courtId : id,
-    //     timeSlotId : []
-    // ])
-
     const handleSubmit = () => {
         
         apiCall.post(`/admincontrol/bookings`, {})
