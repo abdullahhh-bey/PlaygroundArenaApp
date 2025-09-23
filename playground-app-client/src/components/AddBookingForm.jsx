@@ -3,7 +3,7 @@ import apiCall from "../services/axios";
 
 
 
-export default function AddBookingForm({id}) {
+export default function AddBookingForm({id , price}) {
 
     const handleSubmit = () => {
         
@@ -17,28 +17,17 @@ export default function AddBookingForm({id}) {
       </h5>
       <form className="row g-3">
         <div className="col-md-6">
-          <input type="text" className="form-control" placeholder="Enter Name..." />
+          <input type="text" className="form-control" placeholder="Your Name ..." />
         </div>
         <div className="col-md-6">
           <input type="date" className="form-control" />
         </div>
         <div className="col-md-6">
-          <select className="form-select">
-            <option>Select Start Time</option>
-            <option>10:00 AM</option>
-            <option>11:00 AM</option>
-          </select>
-        </div>
-        <div className="col-md-6">
-          <select className="form-select">
-            <option>Select End Time</option>
-            <option>11:00 AM</option>
-            <option>12:00 PM</option>
-          </select>
+          <input type="text" value={price} className="form-control" disabled="true" />
         </div>
         <div className="col-12 text-center">
           <button onChange={handleSubmit} className="btn btn-success px-4">
-            Add Booking
+            Book Now
           </button>
         </div>
       </form>

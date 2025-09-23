@@ -232,6 +232,7 @@ namespace PlaygroundArenaApp.Application.Services
                 Name = court.Name,
                 Slots = slots.Select(t => new SlotsDTO
                 {
+                    Id = t.TimeSlotId,
                     Start = t.StartTime,
                     End = t.EndTime,
                     Price = t.Price
