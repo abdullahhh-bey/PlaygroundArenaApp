@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlaygroundArenaApp.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PlaygroundArenaApp.Infrastructure.Data;
 namespace PlaygroundArenaApp.Migrations
 {
     [DbContext(typeof(PlaygroundArenaDbContext))]
-    partial class PlaygroundArenaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250924151448_AddedCourtRulesTable")]
+    partial class AddedCourtRulesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,31 +110,6 @@ namespace PlaygroundArenaApp.Migrations
                     b.HasIndex("ArenaId");
 
                     b.ToTable("Courts");
-                });
-
-            modelBuilder.Entity("PlaygroundArenaApp.Core.Models.CourtRules", b =>
-                {
-                    b.Property<int>("RuleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RuleId"));
-
-                    b.Property<int>("CourtId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinimumSlotsBooking")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeInterval")
-                        .HasColumnType("int");
-
-                    b.HasKey("RuleId");
-
-                    b.HasIndex("CourtId")
-                        .IsUnique();
-
-                    b.ToTable("CourtRules");
                 });
 
             modelBuilder.Entity("PlaygroundArenaApp.Core.Models.Payment", b =>
@@ -261,15 +239,6 @@ namespace PlaygroundArenaApp.Migrations
                     b.Navigation("Arena");
                 });
 
-            modelBuilder.Entity("PlaygroundArenaApp.Core.Models.CourtRules", b =>
-                {
-                    b.HasOne("PlaygroundArenaApp.Core.Models.Court", null)
-                        .WithOne("CourtRule")
-                        .HasForeignKey("PlaygroundArenaApp.Core.Models.CourtRules", "CourtId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("PlaygroundArenaApp.Core.Models.Payment", b =>
                 {
                     b.HasOne("PlaygroundArenaApp.Core.Models.Booking", "Booking")
@@ -321,9 +290,6 @@ namespace PlaygroundArenaApp.Migrations
             modelBuilder.Entity("PlaygroundArenaApp.Core.Models.Court", b =>
                 {
                     b.Navigation("Bookings");
-
-                    b.Navigation("CourtRule")
-                        .IsRequired();
 
                     b.Navigation("TimeSlots");
                 });

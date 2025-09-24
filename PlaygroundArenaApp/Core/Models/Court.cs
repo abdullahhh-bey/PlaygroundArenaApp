@@ -11,5 +11,6 @@
 
         public ICollection<TimeSlot> TimeSlots { get; set; } = new List<TimeSlot>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+        public CourtRules CourtRule { get; set; } = null!;
     }
 }
