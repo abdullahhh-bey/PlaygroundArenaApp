@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Core.Models;
@@ -10,10 +11,12 @@ namespace PlaygroundArenaApp.Application.Services
     {
         private readonly PlaygroundArenaDbContext _context;
         private readonly ILogger<AdminArenaService> _logger;
-        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger)
+        private readonly IMapper _mapper;
+        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            _mapper = mapper;
         }
 
 
@@ -293,6 +296,26 @@ namespace PlaygroundArenaApp.Application.Services
             }
 
             await _context.TimeSlots.AddRangeAsync(slotsList);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
+
+
+        public async Task<bool> CreateCourtRulesService(AddCourtRulesDTO dto)
+        {
+            var check = await _context.Courts.FindAsync(id);
+            if(!check)
+                throw new KeyNotFoundException("Court don't exist")
+            
+            if(dto.MinimumSlotsBooking < 1)
+            {
+                throw new BadHttpRequestException("Invalid Minimum Booking");
+            }
+
+            var court = _mapper.Map<CourtRules>(dto);
+            await _context.CourtRules.AddAsync(court);
             await _context.SaveChangesAsync();
             return true;
         }

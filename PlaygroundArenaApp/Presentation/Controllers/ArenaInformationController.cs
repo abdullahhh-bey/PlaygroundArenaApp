@@ -174,6 +174,19 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
+
+
+
+        [HttpGet("courts/rules/{id}")]
+        public async Task<IActionResult> GetCourtRulesAPI(int id)
+        {
+            var rules = await _arenaService.GetCourtRulesService(id);
+            return Ok(rules);
+        }
+
+
+
+
  
     }
 }
