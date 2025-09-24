@@ -287,18 +287,18 @@ namespace PlaygroundArenaApp.Application.Services
         public async Task<CourtRulesDTO> GetCourtRulesService(int id)
         {
             var check = await _context.Courts.FindAsync(id);
-            if (!check)
+            if (check == null)
                 throw new KeyNotFoundException("Court dont exist");
 
-            var rules = await _context.CourtRules
-                        .Where(r => r.CourtId == id)
+            var rule = await _context.CourtRules
+                        .FirstOrDefaultAsync(r => r.CourtId == id);
 
+            if (rule == null)
+                throw new KeyNotFoundException("Court rule not found");
 
-            if (rules == null)
-                return new CourtRulesDTO();
+            var result = _mapper.Map<CourtRulesDTO>(rule);
 
-            var rulesDto = _mapping.Map<CourtRulesDTO>(rules);
-            return rulesDto;
+            return result;
         }
 
 

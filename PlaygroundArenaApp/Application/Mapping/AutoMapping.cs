@@ -15,6 +15,7 @@ namespace PlaygroundArenaApp.Application.Mapping
             CreateMap<Court , CourtDetailsDTO>();
             CreateMap<Booking, GetBookingDTO>();
             CreateMap<AddCourtRulesDTO, CourtRules>();
+            CreateMap<CourtRules, CourtRulesDTO>();
         }
     }
 }

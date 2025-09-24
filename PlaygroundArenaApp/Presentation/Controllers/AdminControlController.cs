@@ -124,5 +124,19 @@ namespace PlaygroundArenaApp.Presentation.Controllers
         }
 
 
+
+
+        [HttpPost("courts/rules")]
+        public async Task<IActionResult> CreateCourtRulesAPI( AddCourtRulesDTO dto)
+        {
+            if(!ModelState.IsValid)
+                throw new ArgumentNullException("Incomplete Information");
+
+            var check = await _adminservice.CreateCourtRulesService(dto);
+            return Ok("Court Rules Created!");
+        }
+
+
+
     }
 }

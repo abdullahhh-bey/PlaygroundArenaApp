@@ -166,49 +166,61 @@ namespace PlaygroundArenaApp.Application.Services
             if (!userExists)
                 throw new KeyNotFoundException("User not found");
 
-       
+            var courtRules = await _context.CourtRules.FirstOrDefaultAsync(r => r.CourtId == d.CourtId);
+            if (courtRules == null)
+                throw new BadHttpRequestException("Court rules not here");
+
             var slots = await _context.TimeSlots
-                    .Where(s => d.TimeSlotId.Contains(s.TimeSlotId) && s.IsAvailable && s.CourtId == d.CourtId)
-                    .ToListAsync();
+                .Where(s => d.TimeSlotId.Contains(s.TimeSlotId) && s.IsAvailable && s.CourtId == d.CourtId)
+                .OrderBy(s => s.StartTime)
+                .ToListAsync();
 
             if (slots.Count == 0)
-                throw new BadHttpRequestException($"Invalid Slots for Court:{d.CourtId}");
+                throw new BadHttpRequestException($"Invalid slots for Court: {d.CourtId}");
 
             if (slots.Count != d.TimeSlotId.Count)
                 throw new BadHttpRequestException("One or more slots are unavailable");
 
+            if (slots.Count < courtRules.MinimumSlotsBooking)
+                throw new BadHttpRequestException($"You must book at least {courtRules.MinimumSlotsBooking} slots");
+
+            //gpt
+            var interval = TimeSpan.FromMinutes(courtRules.TimeInterval);
+            for (int i = 0; i < slots.Count - 1; i++)
+            {
+                if (slots[i + 1].StartTime - slots[i].EndTime != TimeSpan.Zero)
+                    throw new BadHttpRequestException("Slots must be continuous without gaps");
+            }
 
             var booking = new Booking
             {
                 UserId = d.UserId,
                 CourtId = d.CourtId,
-                StartTime = slots.Min(s => s.StartTime),
-                EndTime = slots.Max(s => s.EndTime),
+                StartTime = slots.First().StartTime,
+                EndTime = slots.Last().EndTime,
                 BookingStatus = "Pending"
             };
 
             _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
 
             foreach (var slot in slots)
             {
                 slot.BookingId = booking.BookingId;
-                slot.IsAvailable = false; 
+                slot.IsAvailable = false;
             }
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Booking {BookingId} created for user{UserId} at {Time}", booking.BookingId, booking.UserId, DateTime.UtcNow);
+            _logger.LogInformation("Booking {BookingId} created for user {UserId} at {Time}",
+                booking.BookingId, booking.UserId, DateTime.UtcNow);
 
-            var dto = new BookingResponseDTO
+            return new BookingResponseDTO
             {
                 Message = "Booking Pending",
                 BookingId = booking.BookingId,
                 UserId = booking.UserId,
                 CourtId = booking.CourtId
             };
-
-            return dto;
         }
 
 
@@ -252,62 +264,66 @@ namespace PlaygroundArenaApp.Application.Services
 
 
         public async Task<bool> CreateSlotsWithRangeService( AddSlotsEWithTimeRangeDTO dto )
-        {
-            //cannot get past 
+        {      
             if (dto.Date.Date < DateTime.UtcNow.Date)
-                throw new BadHttpRequestException("Date cannot be past");
+                throw new BadHttpRequestException("Date cannot be in the past");
 
-            //added for time validation
             if (dto.Start >= dto.End || dto.Start < 0 || dto.End > 24)
-                throw new BadHttpRequestException("Invalid Start/End Time");
+                throw new BadHttpRequestException("Invalid start/end time");
 
-            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId);
-            if (!courtExists)
-                throw new BadHttpRequestException("Court doesn't exist");
+            if (!await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId))
+                throw new BadHttpRequestException("Court not found");
+
+            var rules = await _context.CourtRules.FirstOrDefaultAsync(r => r.CourtId == dto.CourtId);
+            if (rules == null)
+                throw new BadHttpRequestException("Court rules not defined");
+
 
             var existingSlots = await _context.TimeSlots
-                            .Where(s => s.CourtId == dto.CourtId && s.Date.Date == dto.Date.Date)
-                            .ToListAsync();
+                .Where(s => s.CourtId == dto.CourtId && s.Date.Date == dto.Date.Date)
+                .ToListAsync();
 
-            var slotsList = new List<TimeSlot>();
-            for (int hour = dto.Start; hour < dto.End; hour++)
+
+            var slots = new List<TimeSlot>();
+
+            var start = TimeSpan.FromHours(dto.Start);
+            var end = TimeSpan.FromHours(dto.End);
+
+
+            //gpt
+            for (var t = start; t < end; t = t.Add(TimeSpan.FromMinutes(rules.TimeInterval)))
             {
+                var slotEnd = t.Add(TimeSpan.FromMinutes(rules.TimeInterval));
+                if (slotEnd > end) break;
 
-                //GPT
-                var slotStart = new TimeSpan(hour, 0, 0);
-                var slotEnd = new TimeSpan(hour + 1, 0, 0);
+                if (existingSlots.Any(s => s.StartTime < slotEnd && s.EndTime > t))
+                    continue;
 
-                //GPT
-                bool alreadySlot = existingSlots.Any(s =>
-                    s.StartTime < slotEnd && s.EndTime > slotStart);
-
-                if (alreadySlot)
-                    throw new BadHttpRequestException($"Slot {slotStart}-{slotEnd} overlapping with theexisting slots");
-
-                slotsList.Add(new TimeSlot
+                slots.Add(new TimeSlot
                 {
                     CourtId = dto.CourtId,
                     Date = dto.Date.Date,
-                    StartTime = slotStart,
+                    StartTime = t,
                     EndTime = slotEnd,
                     Price = dto.Price,
                     IsAvailable = true
                 });
             }
 
-            await _context.TimeSlots.AddRangeAsync(slotsList);
+            if (!slots.Any())
+                throw new BadHttpRequestException("No valid slots to add");
+
+            await _context.TimeSlots.AddRangeAsync(slots);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-
+        }     
 
 
         public async Task<bool> CreateCourtRulesService(AddCourtRulesDTO dto)
         {
-            var check = await _context.Courts.FindAsync(id);
-            if(!check)
-                throw new KeyNotFoundException("Court don't exist")
+            var check = await _context.Courts.FindAsync(dto.CourtId);
+            if (check == null)
+                throw new KeyNotFoundException("Court don't exist");
             
             if(dto.MinimumSlotsBooking < 1)
             {
