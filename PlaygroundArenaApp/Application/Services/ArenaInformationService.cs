@@ -3,17 +3,20 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 
 namespace PlaygroundArenaApp.Application.Services
 {
     public class ArenaInformationService
     {
+        private readonly IUnitOfWork _unit;
         private readonly PlaygroundArenaDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<ArenaInformationService> _logger;
 
-        public ArenaInformationService(PlaygroundArenaDbContext context, IMapper mapper, ILogger<ArenaInformationService> logger)
+        public ArenaInformationService(IUnitOfWork unit, PlaygroundArenaDbContext context, IMapper mapper, ILogger<ArenaInformationService> logger)
         {
+            _unit = unit;
             _context = context;
             _mapper = mapper;
             _logger = logger;
@@ -23,7 +26,7 @@ namespace PlaygroundArenaApp.Application.Services
         //All get services
         public async Task<List<GetArenaDTO>> GetArenasService()
         {
-            var arenas = await _context.Arenas.ToListAsync();
+            var arenas = await _unit.Arena.GetArenaList();
             if (arenas.Count == 0)
                 return new List<GetArenaDTO>();
 

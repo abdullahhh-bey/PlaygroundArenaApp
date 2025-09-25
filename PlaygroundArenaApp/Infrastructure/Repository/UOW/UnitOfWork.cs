@@ -6,7 +6,7 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.UOW
     public class UnitOfWork : IUnitOfWork
     {
         private readonly PlaygroundArenaDbContext _context;
-        private readonly IArenaRepository Arena { get; };
+        public IArenaRepository Arena { get; private set; }
 
         public UnitOfWork(PlaygroundArenaDbContext context, IArenaRepository arena)
         {
@@ -21,7 +21,7 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.UOW
         }
 
         public void Dispose() {
-            return _context.Dispose();
+             _context.Dispose();
         }
 
 

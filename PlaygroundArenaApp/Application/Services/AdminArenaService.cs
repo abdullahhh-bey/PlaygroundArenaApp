@@ -4,16 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Core.Models;
 using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 
 namespace PlaygroundArenaApp.Application.Services
 {
     public class AdminArenaService
     {
+        private readonly IUnitOfWork _unit;
         private readonly PlaygroundArenaDbContext _context;
         private readonly ILogger<AdminArenaService> _logger;
         private readonly IMapper _mapper;
-        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger, IMapper mapper)
+        public AdminArenaService(IUnitOfWork unit, PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger, IMapper mapper)
         {
+            _unit = unit;
             _context = context;
             _logger = logger;
             _mapper = mapper;

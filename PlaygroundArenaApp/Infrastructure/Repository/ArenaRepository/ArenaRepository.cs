@@ -1,4 +1,6 @@
 ﻿using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository
 {
@@ -25,15 +27,15 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository
         }
 
 
-        public async Task<IdentityResult> AddArena( Arena arena)
+        public async Task AddArena( Arena arena)
         {
-            return await _context.Arenas.AddAsync(arena);
+             await _context.Arenas.AddAsync(arena);
         }
 
 
         public async Task<Arena> GetArenaById(int id)
         {
-            return await _context.Arenas.FirstOrDefault(a => a.ArenaId == id);
+            return _context.Arenas.FirstOrDefault(a => a.ArenaId == id);
         }
 
 
@@ -47,9 +49,9 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository
 
 
 
-        public async Task<IdentityResult> DeleteArena(Arena arena)
+        public async Task DeleteArena(Arena arena)
         {
-            return await _context.Arenas.Remove(arena);
+             _context.Arenas.Remove(arena);
         }
 
 
