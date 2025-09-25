@@ -202,6 +202,7 @@ namespace PlaygroundArenaApp.Application.Services
             };
 
             _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
 
             foreach (var slot in slots)
             {
