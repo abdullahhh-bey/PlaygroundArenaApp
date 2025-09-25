@@ -137,9 +137,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<ArenaDetailsDTO> GetArenaWithCourtService(int id)
         {
-            var arenaCourt = await _context.Arenas
-                            .Include(a => a.Courts)
-                            .FirstOrDefaultAsync(a => a.ArenaId == id);
+            var arenaCourt = await _unit.Arena.GetArenaByIdWithCourt(id);
             
             if (arenaCourt == null)
                 throw new KeyNotFoundException("Arena not found");

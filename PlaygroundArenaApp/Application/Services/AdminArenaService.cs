@@ -40,7 +40,7 @@ namespace PlaygroundArenaApp.Application.Services
                 Location = dto.Location
             };
 
-            await _context.Arenas.AddAsync(arena);
+            await _unit.Arena.AddArena(arena);
             _logger.LogInformation("Arena {ID} added to the Database at {Time}", arena.ArenaId , DateTime.UtcNow);
             await _context.SaveChangesAsync();
 
@@ -76,7 +76,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<bool> CreateCourtService(AddCourtByArenaIdDTO dto)
         {
-            var check = await _context.Arenas.FirstOrDefaultAsync(a => a.ArenaId == dto.ArenaId);
+            var check = await _unit.Arena.GetArenaById(dto.ArenaId);
             if (check == null)
                 return false;
 
@@ -135,11 +135,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<bool> DeleteArenaService(int id)
         {
-            var arena = await _context.Arenas
-                        .Include(c => c.Courts)
-                            .ThenInclude(t => t.TimeSlots)
-                        .FirstOrDefaultAsync(a => a.ArenaId == id);
-
+            var arena = await _unit.Arena.GetArenaByIdWithCourtAndSlots(id);
             if (arena == null)
                 return false;
 
@@ -150,7 +146,7 @@ namespace PlaygroundArenaApp.Application.Services
             }
 
              _context.Courts.RemoveRange(arena.Courts);
-             _context.Arenas.Remove(arena);
+            await _unit.Arena.DeleteArena(arena);
             await _context.SaveChangesAsync();
             return true;
         }
