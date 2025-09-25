@@ -4,6 +4,8 @@ using PlaygroundArenaApp.Application.Middlewares.CustomGlobalExceptionHandler;
 using PlaygroundArenaApp.Application.Middlewares.CustomSerilogLogging;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,7 +51,8 @@ builder.Services.AddProblemDetails();
 //Registring a AdminService & ArenInfoService
 builder.Services.AddScoped<AdminArenaService>();
 builder.Services.AddScoped<ArenaInformationService>();
-
+builder.Services.AddScoped<IArenaRepository , ArenaRepository>();
+builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
 //registered Auto Mapper
 builder.Services.AddAutoMapper(typeof(AutoMapping));
 
