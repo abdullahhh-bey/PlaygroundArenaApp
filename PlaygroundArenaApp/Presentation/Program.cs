@@ -5,6 +5,7 @@ using PlaygroundArenaApp.Application.Middlewares.CustomSerilogLogging;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
 using PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.CourtRepository;
 using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 using Serilog;
 
@@ -52,6 +53,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<AdminArenaService>();
 builder.Services.AddScoped<ArenaInformationService>();
 builder.Services.AddScoped<IArenaRepository , ArenaRepository>();
+builder.Services.AddScoped<ICourtRepository, CourtRepository>();
 builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
 //registered Auto Mapper
 builder.Services.AddAutoMapper(typeof(AutoMapping));

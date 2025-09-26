@@ -42,7 +42,7 @@ namespace PlaygroundArenaApp.Application.Services
 
             await _unit.Arena.AddArena(arena);
             _logger.LogInformation("Arena {ID} added to the Database at {Time}", arena.ArenaId , DateTime.UtcNow);
-            await _context.SaveChangesAsync();
+            await _unit.SaveAsync();
 
             return true;
         }
@@ -80,7 +80,7 @@ namespace PlaygroundArenaApp.Application.Services
             if (check == null)
                 return false;
 
-            var courtCheck = await _context.Courts.AnyAsync(c => c.Name == dto.Name && c.ArenaId == dto.ArenaId);
+            var courtCheck = await _unit.Court.CheckCourtByNameAndArenaId(dto.Name, dto.ArenaId);
             if (courtCheck)
                 throw new BadHttpRequestException("Court with this name already exist");
 
@@ -91,16 +91,16 @@ namespace PlaygroundArenaApp.Application.Services
                 CourtType = dto.CourtType
             };
 
-            await _context.Courts.AddAsync(court);
+            await _unit.Court.AddCourtAsync(court);
             _logger.LogInformation("Court {ID} added to the Database at {Time}", court.CourtId, DateTime.UtcNow);
-            await _context.SaveChangesAsync();
+            await _unit.SaveAsync();
             return true;
         }
 
 
         public async Task<bool> CreateCourtTimeSlotsService(AddTimeSlotsByCourtIdDTO dto)
         {
-            var check = await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId);
+            var check = await _unit.Court.IsCourtExists(dto.CourtId);
             if (!check)
                 return false;
 
@@ -145,9 +145,9 @@ namespace PlaygroundArenaApp.Application.Services
                 _context.TimeSlots.RemoveRange(court.TimeSlots);
             }
 
-             _context.Courts.RemoveRange(arena.Courts);
+            await _unit.Court.DeleteCourtWithSlots(arena.Courts);
             await _unit.Arena.DeleteArena(arena);
-            await _context.SaveChangesAsync();
+            await _unit.SaveAsync();
             return true;
         }
 
@@ -157,7 +157,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<BookingResponseDTO> CreateBookingAsync(AddBookingDTO d)
         {
-            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == d.CourtId);
+            var courtExists = await _unit.Court.IsCourtExists(d.CourtId);
             if (!courtExists)
                 throw new KeyNotFoundException("Court not found");
 
@@ -271,7 +271,7 @@ namespace PlaygroundArenaApp.Application.Services
             if (dto.Start >= dto.End || dto.Start < 0 || dto.End > 24)
                 throw new BadHttpRequestException("Invalid start/end time");
 
-            if (!await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId))
+            if (!await _unit.Court.IsCourtExists(dto.CourtId))
                 throw new BadHttpRequestException("Court not found");
 
             var rules = await _context.CourtRules.FirstOrDefaultAsync(r => r.CourtId == dto.CourtId);
@@ -321,7 +321,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<bool> CreateCourtRulesService(AddCourtRulesDTO dto)
         {
-            var check = await _context.Courts.FindAsync(dto.CourtId);
+            var check = await _unit.Court.GetCourtById(dto.CourtId);
             if (check == null)
                 throw new KeyNotFoundException("Court don't exist");
             

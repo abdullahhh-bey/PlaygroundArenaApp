@@ -27,35 +27,43 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.CourtRepository
                 return false;
         }
 
-        public Task DeleteCourtWithSlots(Court court)
+        public Task DeleteCourtWithSlots(ICollection<Court> court)
         {
              _context.Courts.RemoveRange(court);
             return Task.CompletedTask;
         }
 
-        public async Task<Court> GetCourtById(int id)
+        public async Task<Court?> GetCourtById(int id)
         {
             return await _context.Courts.FindAsync(id);
         }
 
-        public Task<Court> GetCourtByIdWithSlots(int id)
+        public async Task<Court?> GetCourtByIdWithSlots(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Courts
+                         .Include(t => t.TimeSlots)
+                         .FirstOrDefaultAsync(c => c.CourtId == id);
         }
 
-        public Task<List<Court>> GetCourtByTypeWithArenaId(int id, string type)
+        public async Task<List<Court>> GetCourtByTypeWithArenaId(int id, string type)
         {
-            throw new NotImplementedException();
+            return await _context.Courts
+                            .Where(c => c.ArenaId == id && c.CourtType.ToLower() == type.ToLower())
+                            .OrderBy(c => c.CourtId)
+                            .ToListAsync();
         }
 
-        public Task<List<Court>> GetCourtList()
+        public async Task<List<Court>> GetCourtList()
         {
-            throw new NotImplementedException();
+            return await _context.Courts.ToListAsync();
         }
 
-        public Task<bool> IsCourtExists(int id)
+        public async Task<bool> IsCourtExists(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Courts.AnyAsync(c => c.CourtId == id);
         }
+
+
+
     }
 }
