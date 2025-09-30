@@ -200,8 +200,8 @@ namespace PlaygroundArenaApp.Application.Services
                 BookingStatus = "Pending"
             };
 
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
+            await _unit.Book.AddBooking(booking);
+            await _unit.SaveAsync();
 
             foreach (var slot in slots)
             {
@@ -230,9 +230,7 @@ namespace PlaygroundArenaApp.Application.Services
         public async Task<bool> MakePaymentAsync(MakePaymentDTO dto)
         {
 
-            var booking = await _context.Bookings
-                .Include(b => b.TimeSlots)
-                .FirstOrDefaultAsync(b => b.BookingId == dto.BookingId && b.UserId == dto.UserId);
+            var booking = await _unit.Book.GetBookingWithSlots(dto.BookingId, dto.UserId);
 
             if (booking == null)
                 throw new KeyNotFoundException("Booking not found");

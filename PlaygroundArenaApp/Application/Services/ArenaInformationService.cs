@@ -164,11 +164,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<GetBookingDetailsDTO>> GetBookingsService()
         {
-            var bookings = await _context.Bookings
-                            .Include(s => s.TimeSlots)
-                            .Include(p => p.Payment)
-                            .ToListAsync();
-
+            var bookings = await _unit.Book.GetAllBookingsWithSlotsWithPayments();
 
             if (bookings.Count == 0)
                 return new List<GetBookingDetailsDTO>();
@@ -265,16 +261,11 @@ namespace PlaygroundArenaApp.Application.Services
             if (!check)
                 throw new KeyNotFoundException("Court doesn't exist");
 
-            var bookings = await _context.Bookings
-                            .Where(b => b.CourtId == id && b.BookingDate.Date == date.Date)
-                            .OrderBy(b => b.StartTime)
-                            .ToListAsync();
-
+            var bookings = await _unit.Book.GetBookingsByCourtId( id, date );
 
             var bookingDto = _mapper.Map<List<GetBookingDTO>>(bookings);
             return bookingDto;
         }
-
 
 
 
