@@ -74,7 +74,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<TimeSlotsDTO>> GetTimeSlotsService()
         {
-            var timeSlots =  await _context.TimeSlots.ToListAsync();
+            var timeSlots = await _unit.Slot.GetAllSlots();
             if (timeSlots.Count == 0)
                 return new List<TimeSlotsDTO>();
 
@@ -86,10 +86,8 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<TimeSlotsDTO>> GetAvailableTimeSlotsService()
         {
-            var timeSlots = await _context.TimeSlots
-                        .Where(t => t.IsAvailable == true)
-                        .OrderBy(t => t.Date)
-                        .ToListAsync();
+            DateTime date = DateTime.UtcNow;
+            var timeSlots = await _unit.Slot.GetAllAvailableSlots( date);
 
             if (timeSlots.Count == 0)
                 return new List<TimeSlotsDTO>();

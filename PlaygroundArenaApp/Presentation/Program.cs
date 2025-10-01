@@ -7,6 +7,7 @@ using PlaygroundArenaApp.Infrastructure.Data;
 using PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository;
 using PlaygroundArenaApp.Infrastructure.Repository.BookingRepository;
 using PlaygroundArenaApp.Infrastructure.Repository.CourtRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.TimeSlotRepository;
 using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 using Serilog;
 
@@ -61,7 +62,9 @@ builder.Services.AddScoped<ArenaInformationService>();
 builder.Services.AddScoped<IArenaRepository , ArenaRepository>();
 builder.Services.AddScoped<ICourtRepository, CourtRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
 builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
+
 //registered Auto Mapper
 builder.Services.AddAutoMapper(typeof(AutoMapping));
 

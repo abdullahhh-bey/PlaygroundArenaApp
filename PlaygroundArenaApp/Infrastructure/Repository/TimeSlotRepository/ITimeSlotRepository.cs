@@ -9,6 +9,8 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.TimeSlotRepository
         Task AddSlot(TimeSlot t);
         Task<List<TimeSlot>> GetAllSlotsWithIds(AddBookingDTO d);
         Task<List<TimeSlot>> GetSlotsWithCourtIdWithDate(int court_Id ,  DateTime date);
-
+        Task AddAllSlots(ICollection<TimeSlot> t);
+        Task<List<TimeSlot>> GetAllSlots();
+        Task<List<TimeSlot>> GetAllAvailableSlots(DateTime d);
     }
 }

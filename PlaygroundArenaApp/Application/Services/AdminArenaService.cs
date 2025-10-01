@@ -108,9 +108,7 @@ namespace PlaygroundArenaApp.Application.Services
                 throw new BadHttpRequestException("Start time must be before End time");
 
 
-            var slotCheck = await _context.TimeSlots.AnyAsync( t => 
-            (t.StartTime == dto.StartTime && t.EndTime == dto.EndTime) &&
-            (t.Date == dto.Date && t.CourtId == dto.CourtId));
+            var slotCheck = await _unit.Slot.CheckSlots(dto);
 
             if (slotCheck)
                 throw new BadHttpRequestException("Slot Timings already mentioned");
@@ -125,9 +123,9 @@ namespace PlaygroundArenaApp.Application.Services
                 IsAvailable = dto.IsAvailable
             };
 
-            await _context.TimeSlots.AddAsync(timeslot);
+            await _unit.Slot.AddSlot(timeslot);
             _logger.LogInformation("TimeSlots for Court {ID} added to the Database at {Time}", timeslot.CourtId, DateTime.UtcNow);
-            await _context.SaveChangesAsync();
+            await _unit.SaveAsync();
             return true;
         }
 
@@ -169,10 +167,7 @@ namespace PlaygroundArenaApp.Application.Services
             if (courtRules == null)
                 throw new BadHttpRequestException("Court rules not here");
 
-            var slots = await _context.TimeSlots
-                .Where(s => d.TimeSlotId.Contains(s.TimeSlotId) && s.IsAvailable && s.CourtId == d.CourtId)
-                .OrderBy(s => s.StartTime)
-                .ToListAsync();
+            var slots = await _unit.Slot.GetAllSlotsWithIds(d);
 
             if (slots.Count == 0)
                 throw new BadHttpRequestException($"Invalid slots for Court: {d.CourtId}");
@@ -277,9 +272,7 @@ namespace PlaygroundArenaApp.Application.Services
                 throw new BadHttpRequestException("Court rules not defined");
 
 
-            var existingSlots = await _context.TimeSlots
-                .Where(s => s.CourtId == dto.CourtId && s.Date.Date == dto.Date.Date)
-                .ToListAsync();
+            var existingSlots = await _unit.Slot.GetSlotsWithCourtIdWithDate(dto.CourtId, dto.Date);
 
 
             var slots = new List<TimeSlot>();
@@ -311,8 +304,8 @@ namespace PlaygroundArenaApp.Application.Services
             if (!slots.Any())
                 throw new BadHttpRequestException("No valid slots to add");
 
-            await _context.TimeSlots.AddRangeAsync(slots);
-            await _context.SaveChangesAsync();
+            await _unit.Slot.AddAllSlots(slots);
+            await _unit.SaveAsync();
             return true;
         }     
 

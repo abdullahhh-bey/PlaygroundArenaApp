@@ -2,6 +2,7 @@
 using PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository;
 using PlaygroundArenaApp.Infrastructure.Repository.BookingRepository;
 using PlaygroundArenaApp.Infrastructure.Repository.CourtRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.TimeSlotRepository;
 
 namespace PlaygroundArenaApp.Infrastructure.Repository.UOW
 {
@@ -11,13 +12,16 @@ namespace PlaygroundArenaApp.Infrastructure.Repository.UOW
         public IArenaRepository Arena { get; private set; }
         public ICourtRepository Court { get; private set; }
         public IBookingRepository Book { get; private set; }
+        public ITimeSlotRepository Slot { get; private set; }
 
-        public UnitOfWork(PlaygroundArenaDbContext context, IArenaRepository arena, ICourtRepository court, IBookingRepository book)
+
+        public UnitOfWork(PlaygroundArenaDbContext context, ITimeSlotRepository slot , IArenaRepository arena, ICourtRepository court, IBookingRepository book)
         {
             _context = context;
             Arena = arena;
             Court = court;
             Book = book;
+            Slot = slot;
         }
 
         public async Task<int> SaveAsync()
