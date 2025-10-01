@@ -4,16 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Core.Models;
 using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 
 namespace PlaygroundArenaApp.Application.Services
 {
     public class AdminArenaService
     {
+        private readonly IUnitOfWork _unit;
         private readonly PlaygroundArenaDbContext _context;
         private readonly ILogger<AdminArenaService> _logger;
         private readonly IMapper _mapper;
-        public AdminArenaService(PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger, IMapper mapper)
+        public AdminArenaService(IUnitOfWork unit, PlaygroundArenaDbContext context , ILogger<AdminArenaService> logger, IMapper mapper)
         {
+            _unit = unit;
             _context = context;
             _logger = logger;
             _mapper = mapper;
@@ -37,9 +40,9 @@ namespace PlaygroundArenaApp.Application.Services
                 Location = dto.Location
             };
 
-            await _context.Arenas.AddAsync(arena);
+            await _unit.Arena.AddArena(arena);
             _logger.LogInformation("Arena {ID} added to the Database at {Time}", arena.ArenaId , DateTime.UtcNow);
-            await _context.SaveChangesAsync();
+            await _unit.SaveAsync();
 
             return true;
         }
@@ -73,11 +76,11 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<bool> CreateCourtService(AddCourtByArenaIdDTO dto)
         {
-            var check = await _context.Arenas.FirstOrDefaultAsync(a => a.ArenaId == dto.ArenaId);
+            var check = await _unit.Arena.GetArenaById(dto.ArenaId);
             if (check == null)
                 return false;
 
-            var courtCheck = await _context.Courts.AnyAsync(c => c.Name == dto.Name && c.ArenaId == dto.ArenaId);
+            var courtCheck = await _unit.Court.CheckCourtByNameAndArenaId(dto.Name, dto.ArenaId);
             if (courtCheck)
                 throw new BadHttpRequestException("Court with this name already exist");
 
@@ -88,55 +91,49 @@ namespace PlaygroundArenaApp.Application.Services
                 CourtType = dto.CourtType
             };
 
-            await _context.Courts.AddAsync(court);
+            await _unit.Court.AddCourtAsync(court);
             _logger.LogInformation("Court {ID} added to the Database at {Time}", court.CourtId, DateTime.UtcNow);
-            await _context.SaveChangesAsync();
+            await _unit.SaveAsync();
             return true;
         }
 
 
-        public async Task<bool> CreateCourtTimeSlotsService(AddTimeSlotsByCourtIdDTO dto)
-        {
-            var check = await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId);
-            if (!check)
-                return false;
+        //public async Task<bool> CreateCourtTimeSlotsService(AddTimeSlotsByCourtIdDTO dto)
+        //{
+        //    var check = await _unit.Court.IsCourtExists(dto.CourtId);
+        //    if (!check)
+        //        return false;
 
-            if (dto.StartTime >= dto.EndTime)
-                throw new BadHttpRequestException("Start time must be before End time");
+        //    if (dto.StartTime >= dto.EndTime)
+        //        throw new BadHttpRequestException("Start time must be before End time");
 
 
-            var slotCheck = await _context.TimeSlots.AnyAsync( t => 
-            (t.StartTime == dto.StartTime && t.EndTime == dto.EndTime) &&
-            (t.Date == dto.Date && t.CourtId == dto.CourtId));
+        //    var slotCheck = await _unit.Slot.CheckSlots(dto);
 
-            if (slotCheck)
-                throw new BadHttpRequestException("Slot Timings already mentioned");
+        //    if (slotCheck)
+        //        throw new BadHttpRequestException("Slot Timings already mentioned");
 
-            var timeslot = new TimeSlot 
-            {
-                CourtId = dto.CourtId,
-                StartTime = dto.StartTime,
-                EndTime = dto.EndTime,
-                Date = dto.Date,
-                Price = dto.Price,
-                IsAvailable = dto.IsAvailable
-            };
+        //    var timeslot = new TimeSlot 
+        //    {
+        //        CourtId = dto.CourtId,
+        //        StartTime = dto.StartTime,
+        //        EndTime = dto.EndTime,
+        //        Date = dto.Date,
+        //        Price = dto.Price,
+        //        IsAvailable = dto.IsAvailable
+        //    };
 
-            await _context.TimeSlots.AddAsync(timeslot);
-            _logger.LogInformation("TimeSlots for Court {ID} added to the Database at {Time}", timeslot.CourtId, DateTime.UtcNow);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        //    await _unit.Slot.AddSlot(timeslot);
+        //    _logger.LogInformation("TimeSlots for Court {ID} added to the Database at {Time}", timeslot.CourtId, DateTime.UtcNow);
+        //    await _unit.SaveAsync();
+        //    return true;
+        //}
 
 
 
         public async Task<bool> DeleteArenaService(int id)
         {
-            var arena = await _context.Arenas
-                        .Include(c => c.Courts)
-                            .ThenInclude(t => t.TimeSlots)
-                        .FirstOrDefaultAsync(a => a.ArenaId == id);
-
+            var arena = await _unit.Arena.GetArenaByIdWithCourtAndSlots(id);
             if (arena == null)
                 return false;
 
@@ -146,9 +143,9 @@ namespace PlaygroundArenaApp.Application.Services
                 _context.TimeSlots.RemoveRange(court.TimeSlots);
             }
 
-             _context.Courts.RemoveRange(arena.Courts);
-             _context.Arenas.Remove(arena);
-            await _context.SaveChangesAsync();
+            await _unit.Court.DeleteCourtWithSlots(arena.Courts);
+            await _unit.Arena.DeleteArena(arena);
+            await _unit.SaveAsync();
             return true;
         }
 
@@ -158,7 +155,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<BookingResponseDTO> CreateBookingAsync(AddBookingDTO d)
         {
-            var courtExists = await _context.Courts.AnyAsync(c => c.CourtId == d.CourtId);
+            var courtExists = await _unit.Court.IsCourtExists(d.CourtId);
             if (!courtExists)
                 throw new KeyNotFoundException("Court not found");
 
@@ -170,10 +167,7 @@ namespace PlaygroundArenaApp.Application.Services
             if (courtRules == null)
                 throw new BadHttpRequestException("Court rules not here");
 
-            var slots = await _context.TimeSlots
-                .Where(s => d.TimeSlotId.Contains(s.TimeSlotId) && s.IsAvailable && s.CourtId == d.CourtId)
-                .OrderBy(s => s.StartTime)
-                .ToListAsync();
+            var slots = await _unit.Slot.GetAllSlotsWithIds(d);
 
             if (slots.Count == 0)
                 throw new BadHttpRequestException($"Invalid slots for Court: {d.CourtId}");
@@ -201,8 +195,8 @@ namespace PlaygroundArenaApp.Application.Services
                 BookingStatus = "Pending"
             };
 
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
+            await _unit.Book.AddBooking(booking);
+            await _unit.SaveAsync();
 
             foreach (var slot in slots)
             {
@@ -231,9 +225,7 @@ namespace PlaygroundArenaApp.Application.Services
         public async Task<bool> MakePaymentAsync(MakePaymentDTO dto)
         {
 
-            var booking = await _context.Bookings
-                .Include(b => b.TimeSlots)
-                .FirstOrDefaultAsync(b => b.BookingId == dto.BookingId && b.UserId == dto.UserId);
+            var booking = await _unit.Book.GetBookingWithSlots(dto.BookingId, dto.UserId);
 
             if (booking == null)
                 throw new KeyNotFoundException("Booking not found");
@@ -272,7 +264,7 @@ namespace PlaygroundArenaApp.Application.Services
             if (dto.Start >= dto.End || dto.Start < 0 || dto.End > 24)
                 throw new BadHttpRequestException("Invalid start/end time");
 
-            if (!await _context.Courts.AnyAsync(c => c.CourtId == dto.CourtId))
+            if (!await _unit.Court.IsCourtExists(dto.CourtId))
                 throw new BadHttpRequestException("Court not found");
 
             var rules = await _context.CourtRules.FirstOrDefaultAsync(r => r.CourtId == dto.CourtId);
@@ -280,9 +272,7 @@ namespace PlaygroundArenaApp.Application.Services
                 throw new BadHttpRequestException("Court rules not defined");
 
 
-            var existingSlots = await _context.TimeSlots
-                .Where(s => s.CourtId == dto.CourtId && s.Date.Date == dto.Date.Date)
-                .ToListAsync();
+            var existingSlots = await _unit.Slot.GetSlotsWithCourtIdWithDate(dto.CourtId, dto.Date);
 
 
             var slots = new List<TimeSlot>();
@@ -314,15 +304,15 @@ namespace PlaygroundArenaApp.Application.Services
             if (!slots.Any())
                 throw new BadHttpRequestException("No valid slots to add");
 
-            await _context.TimeSlots.AddRangeAsync(slots);
-            await _context.SaveChangesAsync();
+            await _unit.Slot.AddAllSlots(slots);
+            await _unit.SaveAsync();
             return true;
         }     
 
 
         public async Task<bool> CreateCourtRulesService(AddCourtRulesDTO dto)
         {
-            var check = await _context.Courts.FindAsync(dto.CourtId);
+            var check = await _unit.Court.GetCourtById(dto.CourtId);
             if (check == null)
                 throw new KeyNotFoundException("Court don't exist");
             
