@@ -3,17 +3,20 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Core.DTO;
 using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 
 namespace PlaygroundArenaApp.Application.Services
 {
     public class ArenaInformationService
     {
+        private readonly IUnitOfWork _unit;
         private readonly PlaygroundArenaDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<ArenaInformationService> _logger;
 
-        public ArenaInformationService(PlaygroundArenaDbContext context, IMapper mapper, ILogger<ArenaInformationService> logger)
+        public ArenaInformationService(IUnitOfWork unit, PlaygroundArenaDbContext context, IMapper mapper, ILogger<ArenaInformationService> logger)
         {
+            _unit = unit;
             _context = context;
             _mapper = mapper;
             _logger = logger;
@@ -23,7 +26,7 @@ namespace PlaygroundArenaApp.Application.Services
         //All get services
         public async Task<List<GetArenaDTO>> GetArenasService()
         {
-            var arenas = await _context.Arenas.ToListAsync();
+            var arenas = await _unit.Arena.GetArenaList();
             if (arenas.Count == 0)
                 return new List<GetArenaDTO>();
 
@@ -47,7 +50,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<CourtDetailsDTO>> GetCourtService()
         {
-            var check = await _context.Courts.ToListAsync();
+            var check = await _unit.Court.GetCourtList();
             if(check.Count == 0)
                 return new List<CourtDetailsDTO>();
 
@@ -59,7 +62,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<CourtDetailsDTO> GetCourtByIdService(int id)
         {
-            var check = await _context.Courts.FindAsync(id);
+            var check = await _unit.Court.GetCourtById(id);
             if (check == null)
                 throw new KeyNotFoundException($"Court with Id:{id} not found");
 
@@ -71,7 +74,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<TimeSlotsDTO>> GetTimeSlotsService()
         {
-            var timeSlots =  await _context.TimeSlots.ToListAsync();
+            var timeSlots = await _unit.Slot.GetAllSlots();
             if (timeSlots.Count == 0)
                 return new List<TimeSlotsDTO>();
 
@@ -83,10 +86,8 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<TimeSlotsDTO>> GetAvailableTimeSlotsService()
         {
-            var timeSlots = await _context.TimeSlots
-                        .Where(t => t.IsAvailable == true)
-                        .OrderBy(t => t.Date)
-                        .ToListAsync();
+            DateTime date = DateTime.UtcNow;
+            var timeSlots = await _unit.Slot.GetAllAvailableSlots( date);
 
             if (timeSlots.Count == 0)
                 return new List<TimeSlotsDTO>();
@@ -99,9 +100,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<CourtWithTimeSlotsDTO> GetCourtWithSlotsService(int id)
         {
-            var courtTimeSlots = await _context.Courts
-                                .Include(t =>  t.TimeSlots)
-                                .FirstOrDefaultAsync(c => c.CourtId == id);
+            var courtTimeSlots = await _unit.Court.GetCourtByIdWithSlots(id);
 
             if (courtTimeSlots == null)
                 throw new KeyNotFoundException("Court dont exist");
@@ -134,9 +133,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<ArenaDetailsDTO> GetArenaWithCourtService(int id)
         {
-            var arenaCourt = await _context.Arenas
-                            .Include(a => a.Courts)
-                            .FirstOrDefaultAsync(a => a.ArenaId == id);
+            var arenaCourt = await _unit.Arena.GetArenaByIdWithCourt(id);
             
             if (arenaCourt == null)
                 throw new KeyNotFoundException("Arena not found");
@@ -165,11 +162,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<GetBookingDetailsDTO>> GetBookingsService()
         {
-            var bookings = await _context.Bookings
-                            .Include(s => s.TimeSlots)
-                            .Include(p => p.Payment)
-                            .ToListAsync();
-
+            var bookings = await _unit.Book.GetAllBookingsWithSlotsWithPayments();
 
             if (bookings.Count == 0)
                 return new List<GetBookingDetailsDTO>();
@@ -215,9 +208,7 @@ namespace PlaygroundArenaApp.Application.Services
                 return new CourtSlotsDTO();
             }
 
-            var court = await _context.Courts
-                        .Include(t => t.TimeSlots)
-                        .FirstOrDefaultAsync(c => c.CourtId == id);
+            var court = await _unit.Court.GetCourtByIdWithSlots(id);
 
             if (court == null)
                 throw new KeyNotFoundException("Court doesn't exist");
@@ -249,10 +240,7 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<CourtDetailsDTO>> GetCourtByType(int arenaId , string type)
         {
-            var courtsType = await _context.Courts
-                            .Where(c => c.ArenaId == arenaId && c.CourtType.ToLower() == type.ToLower())
-                            .OrderBy(c => c.CourtId)
-                            .ToListAsync();
+            var courtsType = await _unit.Court.GetCourtByTypeWithArenaId(arenaId, type);
 
             if (courtsType.Count == 0)
                 return new List<CourtDetailsDTO>();
@@ -266,15 +254,12 @@ namespace PlaygroundArenaApp.Application.Services
 
         public async Task<List<GetBookingDTO>> GetBookingByDate(int id , DateTime date)
         {
-            var check = _context.Courts.Any(c => c.CourtId == id);
+            var check = await _unit.Court.IsCourtExists(id);
+
             if (!check)
                 throw new KeyNotFoundException("Court doesn't exist");
 
-            var bookings = await _context.Bookings
-                            .Where(b => b.CourtId == id && b.BookingDate.Date == date.Date)
-                            .OrderBy(b => b.StartTime)
-                            .ToListAsync();
-
+            var bookings = await _unit.Book.GetBookingsByCourtId( id, date );
 
             var bookingDto = _mapper.Map<List<GetBookingDTO>>(bookings);
             return bookingDto;
@@ -283,10 +268,9 @@ namespace PlaygroundArenaApp.Application.Services
 
 
 
-
         public async Task<CourtRulesDTO> GetCourtRulesService(int id)
         {
-            var check = await _context.Courts.FindAsync(id);
+            var check = await _unit.Court.GetCourtById(id);
             if (check == null)
                 throw new KeyNotFoundException("Court dont exist");
 

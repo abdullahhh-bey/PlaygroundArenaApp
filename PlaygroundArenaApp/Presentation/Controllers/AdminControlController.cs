@@ -60,7 +60,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
 
         [HttpPost("courts/id/slots")]
-        public async Task<IActionResult> CreateCourtTimeSlotsAPI(AddTimeSlotsByCourtIdDTO dto)
+        public async Task<IActionResult> CreateCourtTimeSlotsAPI([FromBody] AddTimeSlotsByCourtIdDTO dto)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentNullException("Invalid null value!");

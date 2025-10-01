@@ -4,6 +4,11 @@ using PlaygroundArenaApp.Application.Middlewares.CustomGlobalExceptionHandler;
 using PlaygroundArenaApp.Application.Middlewares.CustomSerilogLogging;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
+using PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.BookingRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.CourtRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.TimeSlotRepository;
+using PlaygroundArenaApp.Infrastructure.Repository.UOW;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +45,11 @@ builder.Services.AddDbContext<PlaygroundArenaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+//Adding a Db Context service for another Database
+builder.Services.AddDbContext<CompanyDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CompanyConnection")));
+
+
 
 //Adding Exception Handler Globally
 builder.Services.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
@@ -49,6 +59,11 @@ builder.Services.AddProblemDetails();
 //Registring a AdminService & ArenInfoService
 builder.Services.AddScoped<AdminArenaService>();
 builder.Services.AddScoped<ArenaInformationService>();
+builder.Services.AddScoped<IArenaRepository , ArenaRepository>();
+builder.Services.AddScoped<ICourtRepository, CourtRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
+builder.Services.AddScoped<IUnitOfWork , UnitOfWork>();
 
 //registered Auto Mapper
 builder.Services.AddAutoMapper(typeof(AutoMapping));

@@ -98,36 +98,36 @@ namespace PlaygroundArenaApp.Application.Services
         }
 
 
-        //public async Task<bool> CreateCourtTimeSlotsService(AddTimeSlotsByCourtIdDTO dto)
-        //{
-        //    var check = await _unit.Court.IsCourtExists(dto.CourtId);
-        //    if (!check)
-        //        return false;
+        public async Task<bool> CreateCourtTimeSlotsService(AddTimeSlotsByCourtIdDTO dto)
+        {
+            var check = await _unit.Court.IsCourtExists(dto.CourtId);
+            if (!check)
+                return false;
 
-        //    if (dto.StartTime >= dto.EndTime)
-        //        throw new BadHttpRequestException("Start time must be before End time");
+            if (dto.StartTime >= dto.EndTime)
+                throw new BadHttpRequestException("Start time must be before End time");
 
 
-        //    var slotCheck = await _unit.Slot.CheckSlots(dto);
+            var slotCheck = await _unit.Slot.CheckSlots(dto);
 
-        //    if (slotCheck)
-        //        throw new BadHttpRequestException("Slot Timings already mentioned");
+            if (slotCheck)
+                throw new BadHttpRequestException("Slot Timings already mentioned");
 
-        //    var timeslot = new TimeSlot 
-        //    {
-        //        CourtId = dto.CourtId,
-        //        StartTime = dto.StartTime,
-        //        EndTime = dto.EndTime,
-        //        Date = dto.Date,
-        //        Price = dto.Price,
-        //        IsAvailable = dto.IsAvailable
-        //    };
+            var timeslot = new TimeSlot
+            {
+                CourtId = dto.CourtId,
+                StartTime = dto.StartTime,
+                EndTime = dto.EndTime,
+                Date = dto.Date,
+                Price = dto.Price,
+                IsAvailable = dto.IsAvailable
+            };
 
-        //    await _unit.Slot.AddSlot(timeslot);
-        //    _logger.LogInformation("TimeSlots for Court {ID} added to the Database at {Time}", timeslot.CourtId, DateTime.UtcNow);
-        //    await _unit.SaveAsync();
-        //    return true;
-        //}
+            await _unit.Slot.AddSlot(timeslot);
+            _logger.LogInformation("TimeSlots for Court {ID} added to the Database at {Time}", timeslot.CourtId, DateTime.UtcNow);
+            await _unit.SaveAsync();
+            return true;
+        }
 
 
 
