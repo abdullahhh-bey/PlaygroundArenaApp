@@ -44,6 +44,11 @@ builder.Services.AddDbContext<PlaygroundArenaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+//Adding a Db Context service for another Database
+builder.Services.AddDbContext<CompanyDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CompanyConnection")));
+
+
 
 //Adding Exception Handler Globally
 builder.Services.AddExceptionHandler<GlobalExceptionHandlerMiddleware>();
