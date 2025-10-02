@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PlaygroundArenaApp.Application.Mapping;
 using PlaygroundArenaApp.Application.Middlewares.CustomGlobalExceptionHandler;
 using PlaygroundArenaApp.Application.Middlewares.CustomSerilogLogging;
+using PlaygroundArenaApp.Application.Middlewares.Filters;
 using PlaygroundArenaApp.Application.Services;
 using PlaygroundArenaApp.Infrastructure.Data;
 using PlaygroundArenaApp.Infrastructure.Repository.ArenaRepository;
@@ -26,7 +27,8 @@ builder.Services.AddCors(options =>
 
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<LoggingActionFilter>());
+
 
 
 //COnfiguring Logging with Serilog
