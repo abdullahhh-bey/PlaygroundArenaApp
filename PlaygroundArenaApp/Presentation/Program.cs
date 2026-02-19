@@ -19,11 +19,15 @@ var builder = WebApplication.CreateBuilder(args);
 //Adding CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        policy => policy.WithOrigins("http://localhost:3000")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("https://book-n-playyyapp.vercel.app")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
+
 
 
 // Add services to the container.
@@ -84,7 +88,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowReactApp");
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 app.UseMiddleware<SerilogLoggingMiddleware>();
 app.UseExceptionHandler();
