@@ -5,7 +5,6 @@ import apiCall from "../services/axios";
 export default function BookingList({id , date}) {
 
     const [bookings , setBookings ] = useState([])
-    const [error , setError] = useState("")
 
     console.log(id ,)
 
@@ -21,7 +20,6 @@ export default function BookingList({id , date}) {
         })
         .catch(err => {
             console.error(err)
-            setError("Failed to fetch bookings")
         })
 
         }, [id, date])
