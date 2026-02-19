@@ -1,6 +1,6 @@
-import axios from "./axios"
+import axios from "axios";
 
-const apiCall = axios.create({
+var apiCall = axios.create({
     baseURL : "https://localhost:7004/api/",
     timeout : 10000,
     headers : {
