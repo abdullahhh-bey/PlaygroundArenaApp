@@ -1,7 +1,7 @@
 import axios from "axios";
 
 var apiCall = axios.create({
-    baseURL : "https://localhost:7004/api/",
+    baseURL : "https://playgroundarenaapp.onrender.com/api/",
     timeout : 10000,
     headers : {
         "Content-Type" : "application/json"
@@ -9,4 +9,3 @@ var apiCall = axios.create({
 });
 
 export default apiCall
-
