@@ -19,7 +19,7 @@ namespace PlaygroundArenaApp.Presentation.Controllers
 
         //Add User
         [HttpPost("users")]
-        public async Task<IActionResult> CreateUserAPI( AddUserDTO dto)
+        public async Task<IActionResult> CreateUserAPI(AddUserDTO dto)
         {
             if (!ModelState.IsValid)
                 throw new ArgumentNullException("Invalid null value!");
