@@ -86,13 +86,8 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 
-// Redirect root URL to Swagger so visiting / doesn't 404
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
-app.UseCors("AllowFrontend");
-
-// Render (and other PaaS) terminate HTTPS at their load balancer and forward
-// plain HTTP to the container, so in-app HTTPS redirection must be skipped there.
 if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
@@ -100,7 +95,9 @@ if (!app.Environment.IsProduction())
 
 app.UseMiddleware<SerilogLoggingMiddleware>();
 app.UseExceptionHandler();
+
 app.UseRouting();
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 
 app.MapControllers();
