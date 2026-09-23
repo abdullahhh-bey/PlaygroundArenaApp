@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("https://book-n-playyyapp.vercel.app")
+            policy.WithOrigins("https://booknplayyy.netlify.app/")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
